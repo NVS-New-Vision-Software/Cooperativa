@@ -5,11 +5,9 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
   $email = $_POST["email"] ?? '';
   $password = $_POST["password"] ?? '';
 
-  // Simulación de autenticación
   if ($password === "123456") {
     $_SESSION["usuario"] = $email;
 
-    // Verificamos si el correo es del coordinador
     if ($email === "admin@gmail.com") {
       $_SESSION["rol"] = "coordinador";
       header("Location: backoffice.html");
