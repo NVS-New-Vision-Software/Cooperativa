@@ -10,7 +10,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
     if ($email === "admin@gmail.com") {
       $_SESSION["rol"] = "coordinador";
-      header("Location: backoffice.html");
+    header("Location: /Cooperativa/Backoffice/backoffice.html");
+
     } elseif ($email === "socio@gmail.com") {
       $_SESSION["rol"] = "socio";
       header("Location: registro.php");
