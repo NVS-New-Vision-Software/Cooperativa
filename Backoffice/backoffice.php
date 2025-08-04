@@ -9,7 +9,7 @@
 
   <header>
     <h1>Backoffice Unión Buceo</h1>
-    <form method="POST" action="/Cooperativa/Frontend/logout.html">
+    <form method="POST" action="/Cooperativa/Frontend/logout.php">
       <button>Cerrar sesión</button>
     </form>
   </header>
