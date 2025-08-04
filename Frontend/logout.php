@@ -1,6 +1,6 @@
 <?php
 session_start();
 session_destroy();
-header("Location: .../Frontend/login.php");
+header("Location: /Cooperativa/Frontend/login.php");
 exit;
 ?>
