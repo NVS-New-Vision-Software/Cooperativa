@@ -8,7 +8,7 @@
 <body>
 
   <header>
-    <h1>Backoffice Unión Buceo</h1>
+    <h1>Backoffice Unidad Buceo</h1>
     <form method="POST" action="/Cooperativa/Frontend/logout.php">
       <button>Cerrar sesión</button>
     </form>
