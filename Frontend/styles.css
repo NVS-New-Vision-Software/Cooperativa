@@ -1,146 +1,72 @@
-/* Reset básico */
 * {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family:sans-serif;
 }
 
-body {
-  font-family: 'Helvetica Neue', Arial, sans-serif;
-  background-color: #f0f2f5;
-  color: #1c1e21;
-  line-height: 1.4;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
+body{
+  background-color: #edf0f5;
+  background-image: url(fondo.jpg);
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+  overflow: hidden;
+  height: 100vh;
 }
 
-.container {
-  display: flex;
-  max-width: 980px;
-  width: 100%;
-  padding: 20px;
-}
-
-/* Lado izquierdo */
-.branding {
-  flex: 1;
-  padding-right: 40px;
-}
-
-.branding img.logo {
-  width: 200px;
-  margin-bottom: 20px;
-}
-
-.branding h1 {
-  font-size: 28px;
-  margin-bottom: 20px;
-  font-weight: normal;
-}
-
-.branding .world-graphic {
-  width: 100%;
-  max-width: 400px;
-  height: auto;
-}
-
-/* Lado derecho */
-.forms {
-  flex: 1;
-  max-width: 380px;
-}
-
-.login-form,
-.signup-form {
-  background: #fff;
-  padding: 20px 25px;
-  margin-bottom: 15px;
-  border: 1px solid #dddfe2;
-  border-radius: 8px;
-}
-
-.login-form input {
-  width: 100%;
-  padding: 12px;
-  margin-bottom: 10px;
-  border: 1px solid #dddfe2;
-  border-radius: 6px;
-  font-size: 16px;
-}
-
-.login-form button {
-  width: 100%;
-  background-color: #1877f2;
-  color: #fff;
-  border: none;
-  padding: 12px;
-  font-size: 16px;
-  border-radius: 6px;
-  cursor: pointer;
-}
-
-.login-form .options {
+header {
+  background-color: #213B5C;
   display: flex;
   justify-content: space-between;
-  font-size: 14px;
-  margin-top: 8px;
+  padding: 5px 30px;
 }
 
-.login-form .options label {
-  display: flex;
-  align-items: center;
+header img {
+  height: 60px;
+  width: auto;
+  margin-top: 20px;
+  
 }
 
-.login-form .options input[type="checkbox"] {
-  margin-right: 6px;
+.lateral {
+  position: absolute;
+  height: 100%;
+  width: 300px;
+  background-color: white;
 }
 
-.signup-form h2 {
-  font-size: 24px;
-  margin-bottom: 15px;
-}
-
-.signup-form input,
-.signup-form select {
-  width: 100%;
-  padding: 10px;
-  margin-bottom: 12px;
-  border: 1px solid #dddfe2;
-  border-radius: 6px;
-  font-size: 15px;
-}
-
-.signup-form .dbl-input {
-  display: flex;
-  gap: 10px;
-}
-
-.signup-form .dbl-input input,
-.signup-form .dbl-input select {
-  flex: 1;
-}
-
-.signup-form button {
-  width: 100%;
-  background-color: #42b72a;
-  color: #fff;
-  border: none;
-  padding: 12px;
-  font-size: 16px;
-  border-radius: 6px;
+.lateral li {
+  position: relative;
+  list-style: none;
+  padding: 15px;
+  margin: 10px;
+  border-bottom: 1px solid #ccc;
+  background-color: #213B5C;
+  border-radius: 8px;
+  height: 70px;
   cursor: pointer;
-  margin-top: 10px;
+  top: 0;
+  align-items: center;
+  transition: background-color 0.3s, transform 0.3s;
 }
 
-.footer-link {
-  text-align: center;
-  margin-top: 25px;
-  font-size: 14px;
-}
-
-.footer-link a {
-  color: #1877f2;
+.lateral li a {
   text-decoration: none;
+  color: white;
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.lateral li img {
+  height: 40px;
+  width: auto;
+  margin-right: 10px;
+  vertical-align: middle;
+}
+
+.lateral li:hover {
+  background-color: #1a2e4d;
+  transform: scale(1.05);
 }
