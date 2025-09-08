@@ -17,7 +17,7 @@ body{
 }
 
 header {
-  background-color: #4169e1;
+  background-color: #213B5C;
   display: flex;
   justify-content: space-between;
   padding: 5px 30px;
@@ -48,12 +48,13 @@ header img {
   display: flex;
   color: white;
   font-size: 18px;
+  font-weight: bold;
 }
 
 .login-form input {
   padding: 10px;
   border-radius: 5px;
-  border: none; 
+  border: 1px solid #ccc;
   width: 215px;
   height: 35px;
 }
@@ -64,9 +65,7 @@ header img {
   text-decoration: underline;
   margin-top: 5px;
   cursor: pointer;
-}
-
-.forgot-password:hover {
+  font-weight: bold;
   text-decoration: none;
 }
 
@@ -75,60 +74,77 @@ header img {
   width: 120px;
   height: 35px;
   font-size: 18px;
-  border: none;
+  border: 1px solid #ccc;
   cursor: pointer;
   border-radius: 5px;
   transition: background-color 0.3s, transform 0.3s;
-  color:#4169e1;
+  color: #0d366d;
   position: relative;
   top: 37px;
+  font-weight:lighter;
 }
 
 .login-form button:hover {
   transform: scale(1.07);
 }
+.contenedor {
+    position: relative;
+    width: 700px;
+    height: 450px;
+    overflow: hidden;
+    margin: 30px;
+}
 
 .informacion {
     position: absolute;
-    top: 285px;
-    right: 25px;
-    width: 600px;
-    border-radius: 8px;
-    transform: translateY(-50%);
-    text-shadow: 5px 5px 3px rgba(0, 0, 0, 1);
+    bottom:0;
+    width: 100%;
+    background-color: white;
+    padding: 10px;
+    border-bottom-left-radius: 8px;
+    border-bottom-right-radius: 8px;
+    margin:0;
 }
 
 .informacion h2 {
-    text-align: left;
-    margin-bottom: 20px;
-    color: white;
-    font-size: 3em;
+    text-align: center;
+    color: #213B5C;
     font-size: 30px;
-    margin: 10px;
-    
+    margin-bottom: 10px;
+}
+
+.informacion p {
+    text-align: center;
+    color: #213B5C;
+    font-weight: bold;
+    font-size: 18px;
+    line-height: 1.5;
+    margin: 0 20px 10px 20px;
+}
+.imagen img {
+  position: absolute;
+  width: 100%;
+  height: auto;
+  border-top-left-radius:8px;
+  border-top-right-radius:8px;
+  display: block;
 }
 
 .formulario-registro {
     position: absolute;
-    top: 300px;
-    right:52px;
+    top: 291px;
+    right:30px;
     transform: translateY(-50%);
     width: 550px;
     padding: 15px; 
     border-radius: 8px;
-    background-color: #4169e1;
+    background-color: white;
 }
 
 h2 {
-    text-align: left;
+    text-align: center;
     margin-bottom: 5px;
-    color: white;
-}
-
-h3 {
-    text-align: left;
-    margin-bottom: 20px;
-    color: white;
+    color: #213B5C;
 }
 
 .campos-dobles {
@@ -140,14 +156,15 @@ h3 {
 .campos-dobles input {
     width: 100%;
     padding: 10px;
-    border: 1px solid #ccc;
+    border: none;
     border-radius: 4px;
     box-sizing: border-box;
+    background-color: #ebebeb;
 }
 
 .formulario-registro input::placeholder {
     text-align: left;
-    color: #888;
+    color: #636363;
     font-size: 18px;
 }
 
@@ -160,16 +177,17 @@ h3 {
 .campos input {
     width: 100%;
     padding: 10px;
-    border: 1px solid #ccc;
+    border: none;
     border-radius: 4px;
     box-sizing: border-box;
+    background-color: #ebebeb;
 }
 
 .boton-registro {
     width: 100%;
     padding: 12px;
-    background-color: white;
-    color: #4169e1;
+    background-color: #213B5C;
+    color: white;
     border: none;
     border-radius: 4px;
     cursor: pointer;
@@ -183,7 +201,3 @@ h3 {
     transform: scale(1.03);
 }
 
-
-
-#02d12b
-#4169e1
