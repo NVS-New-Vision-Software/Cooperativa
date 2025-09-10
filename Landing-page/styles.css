@@ -93,6 +93,9 @@ header img {
     height: 450px;
     overflow: hidden;
     margin: 30px;
+    box-shadow: 3px 3px 5px #636363;
+    border-bottom-left-radius: 8px;
+    border-bottom-right-radius: 8px;
 }
 
 .informacion {
@@ -104,6 +107,7 @@ header img {
     border-bottom-left-radius: 8px;
     border-bottom-right-radius: 8px;
     margin:0;
+    
 }
 
 .informacion h2 {
@@ -111,6 +115,7 @@ header img {
     color: #213B5C;
     font-size: 30px;
     margin-bottom: 10px;
+
 }
 
 .informacion p {
@@ -139,6 +144,7 @@ header img {
     padding: 15px; 
     border-radius: 8px;
     background-color: white;
+    box-shadow: 3px 3px 5px #636363;
 }
 
 h2 {

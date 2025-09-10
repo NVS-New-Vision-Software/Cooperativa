@@ -1,41 +1,99 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Panel de Usuarios</title>
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
   <header>
-    <h1><img src="logo2.png" alt="logo del sistema" width="180" height="50"></h1>
+    <h1><img src="logo2.png" alt="logo del sistema"></h1>
     <button class="logout-button">Cerrar Sesión</button>
-    </header>
+  </header>
 
-<div class="lateral">
+  <div class="lateral">
     <nav>
-        <ul>
-            <li><a href="">
-              <img src="inicio.png" alt="foto de inicio">
-              Inicio</a>
-            </li>
-            <li><a href="#">
-              <img src="horas.png" alt="foto de horas">
-              Registrar Horas</a></li>
-            <li><a href="#">
-              <img src="pago.png" alt="foto de pago">
-              Aportar Pago</a></li>
-            <li><a href="#">
-              <img src="reporte.png" alt="foto de reporte">
-              Solicitar Reporte</a></li>
-            <li><a href="#">
-              <img src="obra.png" alt="foto de obra">
-              Ver Avances de Obra</a></li>
-            <li><a href="#">
-              <img src="perfil.png" alt="foto de perfil">
-              Ver Perfil</a></li>
-        </ul>
+      <ul>
+        <li data-target="inicio"><img src="inicio.png" alt="">Inicio</li>
+        <li data-target="horas"><img src="horas.png" alt="">Registrar Horas</li>
+        <li data-target="pago"><img src="pago.png" alt="">Aportar Pago</li>
+        <li data-target="reporte"><img src="reporte.png" alt="">Solicitar Reporte</li>
+        <li data-target="obra"><img src="obra.png" alt="">Ver Avances de Obra</li>
+        <li data-target="perfil"><img src="perfil.png" alt="">Gestionar Perfil</li>
+      </ul>
     </nav>
-</div>
+  </div>
+
+  <div class="contenido">
+    <div id="inicio" class="seccion activa">
+      <h2>Bienvenido al Panel de Usuarios</h2>
+      <p>Al seleccionar cualquiera de las opciones de la barra lateral a su izquierda podrá registrar sus horas de trabajo, aportar sus pagos mensuales, solicitar reportes economicos o de participación, ver los avances de la obra y gestionar su perfíl.</p>
+    </div>
+
+    <div id="horas" class="seccion">
+  <h2>Registrar Horas</h2>
+  <p>Formulario para registrar horas de trabajo.</p>
+  <form class="form-horas">
+  <div class="form-row">
+    <!-- Columna izquierda: fecha, hora inicio, hora fin -->
+    <div class="form-col">
+      <div class="form-grupo">
+        <label for="fecha">Fecha:</label>
+        <input type="date" id="fecha" name="fecha" required>
+      </div>
+      <div class="form-grupo">
+        <label for="horaInicio">Hora de inicio:</label>
+        <input type="time" id="horaInicio" name="horaInicio" required>
+      </div>
+      <div class="form-grupo">
+        <label for="horaFin">Hora de fin:</label>
+        <input type="time" id="horaFin" name="horaFin" required>
+      </div>
+    </div>
+
+    <!-- Columna derecha: descripción -->
+    <div class="form-col">
+      <div class="form-grupo">
+        <label for="descripcion">Descripción de la jornada:</label>
+        <textarea id="descripcion" name="descripcion" rows="6" placeholder="Describe lo que realizaste hoy..." required></textarea>
+      </div>
+    </div>
+  </div>
+
+  <button type="submit" class="btn-horas">Registrar Horas</button>
+</form>
+    </div>
+
+    <div id="pago" class="seccion">
+      <h2>Aportar Pago</h2>
+      <p>Sección para aportar pagos.</p>
+      <form class="form-pago">
+        <label for="fecha">Fecha:</label>
+        <input type="date" id="fecha" name="fecha" required>
+        <label for="monto">Monto:</label>
+        <input type="number" id="monto" name="monto" step="0.01" placeholder="0.00" required>
+        <label for="archivo">Adjuntar PDF:</label>
+        <input type="file" id="archivo" name="archivo" accept="application/pdf" required>
+        <button type="submit" class="btn-pago">Enviar</button>
+      </form>
+    </div>
+
+    <div id="reporte" class="seccion">
+      <h2>Solicitar Reporte</h2>
+      <p>Aquí podrás solicitar reportes.</p>
+    </div>
+
+    <div id="obra" class="seccion">
+      <h2>Avances de Obra</h2>
+      <p>Información sobre el progreso de la obra.</p>
+    </div>
+
+    <div id="perfil" class="seccion">
+      <h2>Perfil del Usuario</h2>
+      <p>Datos personales y configuración.</p>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
 </body>
 </html>

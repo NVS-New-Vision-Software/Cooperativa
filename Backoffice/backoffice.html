@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Panel de Usuarios</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header>
+    <h1><img src="logo3.png" alt="logo del sistema"></h1>
+    <button class="logout-button">Cerrar Sesión</button>
+  </header>
+
+  <div class="lateral">
+    <nav>
+      <ul>
+        <li data-target="inicio"><img src="inicio.png" alt="">Inicio</li>
+        <li data-target="horas"><img src="horas.png" alt="">Gestionar Horas</li>
+        <li data-target="pago"><img src="pago.png" alt="">Gestionar Pago</li>
+        <li data-target="postulacion"><img src="reporte.png" alt="">Gestionar Postulaciones</li>
+        <li data-target="obra"><img src="obra.png" alt="">Gestionar Obra</li>
+        <li data-target="perfil"><img src="perfil.png" alt="">Gestionar Perfiles</li>
+      </ul>
+    </nav>
+  </div>
+
+  <div class="contenido">
+    <div id="inicio" class="seccion activa">
+      <h2>Bienvenido al Panel de Administración</h2>
+      <p>Al seleccionar cualquiera de las opciones de la barra lateral a su izquierda podrá gestionar las horas registradas por los socios, los pagos aportados por los socios, gestionar las postulaciones de la cooperativa, gestionar los avances de la obra y gestionar los perfiles de los usuarios del sistema.</p>
+    </div>
+
+    <div id="horas" class="seccion">
+      <h2>Gestionar Horas</h2>
+      <p>Formulario para gestionar las horas de trabajo de los socios.</p>
+      <table class="tablas">
+    <thead>
+      <tr>
+        <th>ID Horas</th>
+        <th>Usuario</th>
+        <th>Fecha</th>
+        <th>Inicio de Jornada</th>
+        <th>Fin de Jornada</th>
+        <th>Descripcion de la jornada</th>
+        <th>Estado</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>1</td>
+        <td>juan.perez@example.com</td>
+        <td>2025-09-05</td>
+        <td>08:00</td>
+        <td>16:00</td>
+        <td>Hicimos los cimientos, xd lol, ejido, lalposnjixhad</td>
+        <td>Pendiente</td>
+        <td>
+          <button class="btn-aprobar">Aprobar</button>
+          <button class="btn-rechazar">Rechazar</button>
+        </td>
+      </tr>
+      <tr>
+        <td>2</td>
+        <td>maria.gomez@example.com</td>
+        <td>2025-09-08</td>
+        <td>09:00</td>
+        <td>13:00</td>
+        <td>qsyo vamo pa la china</td>
+        <td>Pendiente</td>
+        <td>
+          <button class="btn-aprobar" disabled>Aprobar</button>
+          <button class="btn-rechazar">Rechazar</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+    </div>
+
+    <div id="pago" class="seccion">
+      <h2>Gestionar Pagos</h2>
+      <p>Sección para gestionar los pagos de los socios.</p>
+      <table class="tablas">
+    <thead>
+      <tr>
+        <th>ID Pago</th>
+        <th>Usuario</th>
+        <th>Fecha</th>
+        <th>Monto</th>
+        <th>Comprobante</th>
+        <th>Estado</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>1</td>
+        <td>juan.perez@example.com</td>
+        <td>2025-09-05</td>
+        <td>$1500</td>
+        <td><a href="#">Ver</a></td>
+        <td>Pendiente</td>
+        <td>
+          <button class="btn-aprobar">Aprobar</button>
+          <button class="btn-rechazar">Rechazar</button>
+        </td>
+      </tr>
+      <tr>
+        <td>2</td>
+        <td>maria.gomez@example.com</td>
+        <td>2025-09-08</td>
+        <td>$2000</td>
+        <td><a href="#">Ver</a></td>
+        <td>Aprobado</td>
+        <td>
+          <button class="btn-aprobar" disabled>Aprobar</button>
+          <button class="btn-rechazar">Rechazar</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+    </div>
+
+    <div id="postulacion" class="seccion">
+      <h2>Gestionar Postulaciones</h2>
+      <p>Aquí podrás solicitar reportes.</p>
+    </div>
+
+    <div id="obra" class="seccion">
+      <h2>Gestionar Obra</h2>
+      <p>Información sobre el progreso de la obra.</p>
+    </div>
+
+    <div id="perfil" class="seccion">
+      <h2>Gestionar Usuarios</h2>
+      <p>Datos personales y configuración.</p>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

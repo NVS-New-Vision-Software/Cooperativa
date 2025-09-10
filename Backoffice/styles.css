@@ -103,14 +103,16 @@ header img {
   top: 0;
   left: 0;
   right: 0;
+
   opacity: 0;
   transform: translateY(20px);
   pointer-events: none;
+
   transition: opacity 0.5s ease, transform 0.5s ease;
-  background: #213B5C;
+
+  background: rgba(255,255,255,0.9);
   padding: 20px;
   border-radius: 10px;
-  color: white; 
 }
 
 /* Sección activa */
@@ -121,92 +123,60 @@ header img {
   z-index: 1; /* asegura que esté arriba de las otras */
 }
 
-/* FORMULARIO HORAS */
-.form-horas {
+.tablas {
+  width: 100%;
+  border-collapse: collapse;
   margin-top: 20px;
   background: white;
-  padding: 20px;
   border-radius: 10px;
+  overflow: hidden;
   box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-  color: #213B5C;
-  font-weight: bold;
 }
 
-.form-row {
-  display: flex;
-  gap: 20px; /* espacio entre columnas */
-  align-items: flex-start;
+.tablas th, .tablas td {
+  padding: 12px 15px;
+  text-align: center;
+  border-bottom: 1px solid #ddd;
 }
 
-.form-col {
-  display: flex;
-  flex-direction: column;
-  gap: 10px; /* espacio entre inputs dentro de la columna */
-}
-
-textarea {
-  width: 300px; /* ajusta según necesites */
-  resize: none;
-}
-
-.btn-horas {
+.tablas th {
   background-color: #213B5C;
   color: white;
   font-weight: bold;
+}
+
+.tablas tr:hover {
+  background-color: #f1f5fa;
+}
+
+.btn-aprobar, .btn-rechazar {
+  padding: 6px;
   border: none;
-  padding: 10px 20px;
   border-radius: 6px;
   cursor: pointer;
-  transition: background-color 0.3s, transform 0.3s;
-}
-
-.btn-horas:hover {
-  background-color: #1a2e4d;
-  transform: scale(1.05);
-}
-
-.form-pago {
-  margin-top: 20px;
-  background: white;
-  padding: 20px;
-  border-radius: 10px;
-  color: #213B5C;
+  font-size: 16px;
   font-weight: bold;
-  display: flex;
-  flex-direction: column;
-      align-items: center;
+  transition: transform 0.2s, background-color 0.3s;
+  margin:5px;
 }
 
-.form-pago label {
-    margin-top: 10px;
-    font-size: 16px;
-    text-align: center;
-}
-
-.form-pago input {
-    margin-top: 5px;
-    padding: 10px;
-    border-radius: 4px;
-    box-sizing: border-box;
-    background-color: #ebebeb;
-    font-size: 16px;
-}
-
-.btn-pago {
-  background-color: #213B5C;
+.btn-aprobar {
+  background-color: #28a745;
   color: white;
-  font-weight: bold;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: background-color 0.3s, transform 0.3s;
-  margin: 10px;
 }
 
-.btn-pago:hover {
-  background-color: #1a2e4d;
+.btn-aprobar:hover {
+  background-color: #218838;
   transform: scale(1.05);
 }
 
+.btn-rechazar {
+  background-color: #dc3545;
+  color: white;
+  margin-left: 5px;
+}
 
+.btn-rechazar:hover {
+  background-color: #c82333;
+  transform: scale(1.05);
+}
