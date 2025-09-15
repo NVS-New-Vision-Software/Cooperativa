@@ -20,7 +20,7 @@ items.forEach(item => {
 // Cargar postulaciones desde el backend
 async function cargarPostulaciones() {
   try {
-    const res = await fetch('api/get_postulaciones.php');
+    const res = await fetch('../api/get_postulaciones.php');
     const postulaciones = await res.json();
     const tbody = document.querySelector('#postulacion tbody');
     tbody.innerHTML = '';
