@@ -1,5 +1,6 @@
 <?php
 require 'conexion.php';
+header('Content-Type: application/json'); // ← esta línea es esencial
 
 $sql = "SELECT IdPostulacion, Pnom, Pape, Email, estado, FchaSolicitud FROM postulaciones ORDER BY FchaSolicitud DESC";
 $result = $conn->query($sql);
