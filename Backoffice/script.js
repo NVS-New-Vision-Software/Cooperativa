@@ -1,18 +1,3 @@
-document.addEventListener('DOMContentLoaded', () => {
-  console.log("Script cargado correctamente");
-
-  // 🔐 Botón de logout
-  const logoutBtn = document.querySelector('.logout-button');
-  if (logoutBtn) {
-    console.log("Botón de logout detectado");
-    logoutBtn.addEventListener('click', () => {
-      console.log("Click en logout");
-      window.location.href = '../api/logout.php';
-    });
-  } else {
-    console.warn("No se encontró el botón de logout");
-  }
-
   // 🧭 Navegación entre secciones
   const items = document.querySelectorAll(".lateral li");
   const secciones = document.querySelectorAll(".seccion");
@@ -125,5 +110,29 @@ document.addEventListener('DOMContentLoaded', () => {
     } catch (error) {
       console.error("Error en la actualización:", error);
     }
+  };
+
+  document.addEventListener('click', async e => {
+  if (e.target.classList.contains('btn-aprobar') || e.target.classList.contains('btn-rechazar')) {
+    const id = e.target.dataset.id;
+    const tipo = e.target.dataset.tipo;
+    const estado = e.target.classList.contains('btn-aprobar') ? 'aprobado' : 'rechazado';
+
+    const endpoint = tipo === 'horas' ? '../api/update_horas.php' : '../api/update_pago.php';
+
+    const res = await fetch(endpoint, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id, estado })
+    });
+
+    const result = await res.json();
+    if (res.ok && result.status === 'ok') {
+      alert(`${tipo === 'horas' ? 'Horas' : 'Pago'} ${estado} correctamente`);
+      // Podés recargar la tabla si querés
+    } else {
+      alert(result.error || 'Error al actualizar');
+    }
   }
 });
+
