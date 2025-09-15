@@ -1,13 +1,19 @@
 document.addEventListener('DOMContentLoaded', () => {
-  // Botón de logout
+  console.log("Script cargado correctamente");
+
+  // 🔐 Botón de logout
   const logoutBtn = document.querySelector('.logout-button');
   if (logoutBtn) {
+    console.log("Botón de logout detectado");
     logoutBtn.addEventListener('click', () => {
+      console.log("Click en logout");
       window.location.href = '../api/logout.php';
     });
+  } else {
+    console.warn("No se encontró el botón de logout");
   }
 
-  // Navegación entre secciones
+  // 🧭 Navegación entre secciones
   const items = document.querySelectorAll(".lateral li");
   const secciones = document.querySelectorAll(".seccion");
 
@@ -15,7 +21,12 @@ document.addEventListener('DOMContentLoaded', () => {
     item.addEventListener("click", () => {
       secciones.forEach(sec => sec.classList.remove("activa"));
       const target = document.getElementById(item.dataset.target);
-      if (target) target.classList.add("activa");
+      if (target) {
+        target.classList.add("activa");
+        console.log(`Sección activada: ${item.dataset.target}`);
+      } else {
+        console.warn(`No se encontró la sección: ${item.dataset.target}`);
+      }
 
       if (item.dataset.target === "postulacion") {
         cargarPostulaciones();
@@ -23,7 +34,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // Cargar postulaciones desde el backend
+  // 📥 Cargar postulaciones desde el backend
   async function cargarPostulaciones() {
     try {
       const res = await fetch('../api/get_postulaciones.php');
@@ -38,7 +49,10 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
       const tbody = document.querySelector('#postulacion tbody');
-      if (!tbody) return;
+      if (!tbody) {
+        console.warn("No se encontró el tbody de postulaciones");
+        return;
+      }
 
       tbody.innerHTML = '';
 
@@ -65,12 +79,14 @@ document.addEventListener('DOMContentLoaded', () => {
         `;
         tbody.appendChild(tr);
 
+        // Acción aprobar
         tr.querySelector('.btn-aprobar').addEventListener('click', () => {
           if (confirm(`¿Aprobar la postulación de ${p.Email}? Esto creará un usuario y eliminará la postulación.`)) {
             actualizarEstadoPostulacion(p.IdPostulacion, 'aprobada');
           }
         });
 
+        // Acción rechazar
         tr.querySelector('.btn-rechazar').addEventListener('click', () => {
           if (confirm(`¿Rechazar la postulación de ${p.Email}? Esta acción eliminará la postulación.`)) {
             actualizarEstadoPostulacion(p.IdPostulacion, 'rechazada');
@@ -82,7 +98,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  // Actualizar estado de postulación en el backend
+  // 🔄 Actualizar estado de postulación en el backend
   async function actualizarEstadoPostulacion(id, estado) {
     try {
       const res = await fetch('../api/update_postulacion.php', {
