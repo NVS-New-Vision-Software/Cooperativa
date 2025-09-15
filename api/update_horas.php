@@ -24,4 +24,3 @@ $stmt->bind_param("si", $estado, $id);
 $stmt->execute();
 
 echo json_encode(["status" => "ok"]);
-?>

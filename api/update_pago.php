@@ -1,4 +1,5 @@
 <?php
+<?php
 require 'conexion.php';
 session_start();
 header('Content-Type: application/json');
@@ -24,4 +25,3 @@ $stmt->bind_param("si", $estado, $id);
 $stmt->execute();
 
 echo json_encode(["status" => "ok"]);
-?>

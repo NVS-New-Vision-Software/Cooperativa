@@ -41,3 +41,4 @@ $_SESSION['id'] = $user['IdUsuario'];
 $_SESSION['rol'] = $user['Rol'];
 
 echo json_encode(["status" => "ok", "rol" => $user['Rol']]);
+?>

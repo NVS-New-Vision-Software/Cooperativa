@@ -3,7 +3,7 @@ require 'conexion.php';
 session_start();
 header('Content-Type: application/json');
 
-if (!isset($_SESSION['id'])) {
+if (!isset($_SESSION['id']) || !isset($_SESSION['email'])) {
     http_response_code(401);
     echo json_encode(["error" => "No autenticado"]);
     exit;
@@ -21,19 +21,11 @@ if (!$fecha || !$inicio || !$fin || !$descripcion) {
     exit;
 }
 
-// Calcular cantidad de horas
-$inicio_dt = DateTime::createFromFormat('H:i', $inicio);
-$fin_dt = DateTime::createFromFormat('H:i', $fin);
-$cantHoras = ($inicio_dt && $fin_dt) ? ($fin_dt->getTimestamp() - $inicio_dt->getTimestamp()) / 3600 : 0;
-
-if ($cantHoras <= 0) {
-    http_response_code(400);
-    echo json_encode(["error" => "La hora de fin debe ser posterior a la de inicio"]);
-    exit;
-}
-
-$stmt = $conn->prepare("INSERT INTO horastrabajo (IdUsuario, CantHoras, FchaHoras, EstadoHoras) VALUES (?, ?, ?, 'pendiente')");
-$stmt->bind_param("ids", $_SESSION['id'], $cantHoras, $fecha);
+$stmt = $conn->prepare("
+  INSERT INTO horastrabajo (IdUsuario, Email, FchaHoras, HoraInicio, HoraFin, Descripción, EstadoHoras)
+  VALUES (?, ?, ?, ?, ?, ?, 'pendiente')
+");
+$stmt->bind_param("isssss", $_SESSION['id'], $_SESSION['email'], $fecha, $inicio, $fin, $descripcion);
 $stmt->execute();
 
-echo json_encode(["status" => "ok", "horas" => $cantHoras]);
+echo json_encode(["status" => "ok"]);

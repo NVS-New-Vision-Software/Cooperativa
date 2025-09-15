@@ -3,7 +3,7 @@ require 'conexion.php';
 session_start();
 header('Content-Type: application/json');
 
-if (!isset($_SESSION['id'])) {
+if (!isset($_SESSION['id']) || !isset($_SESSION['email'])) {
     http_response_code(401);
     echo json_encode(["error" => "No autenticado"]);
     exit;
@@ -34,8 +34,11 @@ if (!move_uploaded_file($archivo['tmp_name'], $ruta)) {
     exit;
 }
 
-$stmt = $conn->prepare("INSERT INTO pago (IdUsuario, FchaPago, Monto, Comprobante, EstadoPago) VALUES (?, ?, ?, ?, 'pendiente')");
-$stmt->bind_param("isds", $_SESSION['id'], $fecha, $monto, $nombre);
+$stmt = $conn->prepare("
+  INSERT INTO pago (IdUsuario, Email, FchaPago, Monto, Comprobante, EstadoPago)
+  VALUES (?, ?, ?, ?, ?, 'pendiente')
+");
+$stmt->bind_param("issds", $_SESSION['id'], $_SESSION['email'], $fecha, $monto, $nombre);
 $stmt->execute();
 
 echo json_encode(["status" => "ok", "archivo" => $nombre]);
