@@ -25,7 +25,7 @@ document.querySelector('.formulario-registro form').addEventListener('submit', a
   const email = document.getElementById('email-registro').value;
   const password = document.getElementById('password-registro').value;
 
-  const res = await fetch('api/register.php', {
+const res = await fetch('../api/registro_postulante.php', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ nombre, apellido, email, password })
