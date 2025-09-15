@@ -8,9 +8,11 @@ items.forEach(item => {
     const target = document.getElementById(item.dataset.target);
     target.classList.add("activa");
 
-    // Si es la sección de postulaciones, cargar datos
-    if (item.dataset.target === "postulacion") {
-      cargarPostulaciones();
+    switch (item.dataset.target) {
+      case "postulacion":
+        cargarPostulaciones();
+        break;
+      // Podés agregar otras secciones dinámicas acá si querés
     }
   });
 });
@@ -23,35 +25,40 @@ async function cargarPostulaciones() {
     const tbody = document.querySelector('#postulacion tbody');
     tbody.innerHTML = '';
 
+    if (postulaciones.length === 0) {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `<td colspan="8">No hay postulaciones pendientes.</td>`;
+      tbody.appendChild(tr);
+      return;
+    }
+
     postulaciones.forEach(p => {
       const tr = document.createElement('tr');
       tr.innerHTML = `
         <td>${p.IdPostulacion}</td>
         <td>${p.Email}</td>
-        <td>${p.FchaSolicitud.split(' ')[0]}</td>
+        <td>${p.FchaSolicitud?.split(' ')[0] || '-'}</td>
         <td>-</td>
         <td>-</td>
         <td>-</td>
         <td>${p.estado}</td>
         <td>
           <button class="btn-aprobar"${p.estado !== 'pendiente' ? ' disabled' : ''}>Aprobar</button>
-          <button class="btn-rechazar">Rechazar</button>
+          <button class="btn-rechazar"${p.estado !== 'pendiente' ? ' disabled' : ''}>Rechazar</button>
         </td>
       `;
       tbody.appendChild(tr);
 
       // Confirmación antes de aprobar
       tr.querySelector('.btn-aprobar').addEventListener('click', () => {
-        const confirmar = confirm(`¿Aprobar la postulación de ${p.Email}? Esto creará un usuario y eliminará la postulación.`);
-        if (confirmar) {
+        if (confirm(`¿Aprobar la postulación de ${p.Email}? Esto creará un usuario y eliminará la postulación.`)) {
           actualizarEstadoPostulacion(p.IdPostulacion, 'aprobada');
         }
       });
 
       // Confirmación antes de rechazar
       tr.querySelector('.btn-rechazar').addEventListener('click', () => {
-        const confirmar = confirm(`¿Rechazar la postulación de ${p.Email}? Esta acción eliminará la postulación.`);
-        if (confirmar) {
+        if (confirm(`¿Rechazar la postulación de ${p.Email}? Esta acción eliminará la postulación.`)) {
           actualizarEstadoPostulacion(p.IdPostulacion, 'rechazada');
         }
       });
