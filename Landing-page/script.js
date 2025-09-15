@@ -3,7 +3,7 @@ document.querySelector('.login-form').addEventListener('submit', async function(
   const email = document.getElementById('email-login').value;
   const password = document.getElementById('password-login').value;
 
-  const res = await fetch('api/login.php', {
+  const res = await fetch('../api/login.php', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ email, password })
@@ -12,7 +12,7 @@ document.querySelector('.login-form').addEventListener('submit', async function(
   const data = await res.json();
   if (res.ok) {
     localStorage.setItem('usuario_id', data.usuario_id);
-    window.location.href = 'panel.html'; // redirige al panel de usuario
+    window.location.href = '../Frontend/index.html'; // redirige al panel de usuario
   } else {
     alert(data.error || 'Error de autenticación');
   }
@@ -38,3 +38,34 @@ const res = await fetch('../api/registro_postulante.php', {
     alert(data.error || 'Error al registrar');
   }
 });
+
+document.querySelector('.login-form').addEventListener('submit', async e => {
+  e.preventDefault();
+  const email = document.querySelector('#email-login').value;
+  const password = document.querySelector('#password-login').value;
+
+  try {
+    const res = await fetch('../api/login.php', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password })
+    });
+
+    const data = await res.json();
+    if (res.ok && data.status === 'ok') {
+      if (data.rol === 'socio') {
+        window.location.href = '../Frontend/index.html';
+      } else if (data.rol === 'admin') {
+        window.location.href = '../Backoffice/backoffice.html';
+      } else {
+        alert('Rol desconocido');
+      }
+    } else {
+      alert(data.error || 'Error de autenticación');
+    }
+  } catch (err) {
+    console.error('Error en login:', err);
+    alert('Error de conexión con el servidor');
+  }
+});
+

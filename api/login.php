@@ -1,28 +1,43 @@
 <?php
-session_start();
 require 'conexion.php';
+header('Content-Type: application/json');
+session_start();
 
+// Leer cuerpo JSON
 $input = json_decode(file_get_contents("php://input"), true);
-$email = $input['email'];
-$password = $input['password'];
+$email = $input['email'] ?? null;
+$password = $input['password'] ?? null;
 
-$sql = "SELECT * FROM usuario WHERE Email = ?";
-$stmt = $conn->prepare($sql);
+// Validar entrada
+if (!$email || !$password) {
+    http_response_code(400);
+    echo json_encode(["error" => "Email y contraseña requeridos"]);
+    exit;
+}
+
+// Buscar usuario por email
+$query = "SELECT IdUsuario, Contraseña, Rol FROM usuario WHERE Email = ?";
+$stmt = $conn->prepare($query);
+if (!$stmt) {
+    http_response_code(500);
+    echo json_encode(["error" => "Error en prepare: " . $conn->error]);
+    exit;
+}
+
 $stmt->bind_param("s", $email);
 $stmt->execute();
 $result = $stmt->get_result();
+$user = $result->fetch_assoc();
 
-if ($user = $result->fetch_assoc()) {
-    if (password_verify($password, $user['Contraseña'])) {
-        $_SESSION['usuario_id'] = $user['IdUsuario'];
-        echo json_encode(["usuario_id" => $user['IdUsuario']]);
-    } else {
-        http_response_code(401);
-        echo json_encode(["error" => "Contraseña incorrecta"]);
-    }
-} else {
-    http_response_code(404);
-    echo json_encode(["error" => "Usuario no encontrado"]);
+// Verificar credenciales
+if (!$user || !password_verify($password, $user['Contraseña'])) {
+    http_response_code(401);
+    echo json_encode(["error" => "Credenciales inválidas"]);
+    exit;
 }
-?>
 
+// Guardar sesión
+$_SESSION['id'] = $user['IdUsuario'];
+$_SESSION['rol'] = $user['Rol'];
+
+echo json_encode(["status" => "ok", "rol" => $user['Rol']]);

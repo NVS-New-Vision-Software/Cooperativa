@@ -11,3 +11,7 @@ items.forEach(item => {
     target.classList.add("activa");
   });
 });
+
+document.querySelector('.logout-button').addEventListener('click', () => {
+  window.location.href = '../api/logout.php';
+});
