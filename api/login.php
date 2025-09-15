@@ -1,6 +1,6 @@
 <?php
 session_start();
-require '../conexion.php';
+require 'conexion.php';
 
 $input = json_decode(file_get_contents("php://input"), true);
 $email = $input['email'];

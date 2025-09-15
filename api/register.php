@@ -1,5 +1,5 @@
 <?php
-require '../conexion.php';
+require 'conexion.php';
 
 $input = json_decode(file_get_contents("php://input"), true);
 $nombre = $input['nombre'];

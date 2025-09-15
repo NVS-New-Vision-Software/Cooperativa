@@ -1,5 +1,5 @@
 <?php
-require '../conexion.php';
+require 'conexion.php';
 
 $sql = "SELECT IdPostulacion, Pnom, Pape, Email, estado, FchaSolicitud FROM postulaciones ORDER BY FchaSolicitud DESC";
 $result = $conn->query($sql);
