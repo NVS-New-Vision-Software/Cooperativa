@@ -34,7 +34,7 @@
     <div id="horas" class="seccion">
   <h2>Registrar Horas</h2>
   <p>Formulario para registrar horas de trabajo.</p>
-  <form class="form-horas">
+  <form class="form-horas" action="../api/registrar_horas.php" method="POST">
   <div class="form-row">
     <!-- Columna izquierda: fecha, hora inicio, hora fin -->
     <div class="form-col">
@@ -67,7 +67,7 @@
     <div id="pago" class="seccion">
       <h2>Aportar Pago</h2>
       <p>Sección para aportar pagos.</p>
-      <form class="form-pago">
+      <form class="form-pago" action="../api/registrar_pago.php" method="POST" enctype="multipart/form-data">
         <label for="fecha">Fecha:</label>
         <input type="date" id="fecha" name="fecha" required>
         <label for="monto">Monto:</label>
