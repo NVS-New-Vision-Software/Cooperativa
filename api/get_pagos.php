@@ -9,8 +9,7 @@ if (!isset($_SESSION['rol']) || $_SESSION['rol'] !== 'admin') {
     exit;
 }
 
-$query = "
-SELECT IdPago, Email, FchaPago, Monto, Comprobante, EstadoPago
+$query = "SELECT IdPago, Email, FchaPago, Monto, Comprobante, EstadoPago
 FROM pago
 ORDER BY FchaPago DESC
 ";

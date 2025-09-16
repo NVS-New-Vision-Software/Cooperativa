@@ -9,8 +9,7 @@ if (!isset($_SESSION['rol']) || $_SESSION['rol'] !== 'admin') {
     exit;
 }
 
-$query = "
-SELECT IdHoras, Email, FchaHoras, HoraInicio, HoraFin, Descripción, EstadoHoras
+$query = "SELECT IdHoras, Email, FchaHoras, HoraInicio, HoraFin, Descripción, EstadoHoras
 FROM horastrabajo
 ORDER BY FchaHoras DESC
 ";
