@@ -1,32 +1,59 @@
 <?php
+require_once 'conexion.php';
 session_start();
-require 'conexion.php';
+header('Content-Type: application/json');
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-  $fecha = $_POST['fecha'];
-  $monto = $_POST['monto'];
-  $idUsuario = $_SESSION['IdUsuario'];
-  $email = $_SESSION['Email'];
-  $estado = 'pendiente';
-
-  // Manejo del archivo
-  $archivo = $_FILES['archivo'];
-  $nombreArchivo = basename($archivo['name']);
-  $rutaDestino = "uploads/" . $nombreArchivo;
-
-  if (move_uploaded_file($archivo['tmp_name'], $rutaDestino)) {
-    $sql = "INSERT INTO pago (IdUsuario, Email, FchaPago, Monto, Comprobante, EstadoPago)
-            VALUES (?, ?, ?, ?, ?, ?)";
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param("issdss", $idUsuario, $email, $fecha, $monto, $nombreArchivo, $estado);
-
-    if ($stmt->execute()) {
-      echo "Pago registrado correctamente.";
-    } else {
-      echo "Error al registrar el pago.";
-    }
-  } else {
-    echo "Error al subir el comprobante.";
-  }
+// Validar sesión
+if (!isset($_SESSION['IdUsuario']) || !isset($_SESSION['Email'])) {
+  http_response_code(401);
+  echo json_encode(["error" => "No autenticado"]);
+  exit;
 }
+
+$IdUsuario = $_SESSION['IdUsuario'];
+$Email = $_SESSION['Email'];
+
+// Validar campos
+$fecha = $_POST['fecha'] ?? null;
+$monto = $_POST['monto'] ?? null;
+$archivo = $_FILES['archivo'] ?? null;
+
+if (!$fecha || !$monto || !$archivo) {
+  http_response_code(400);
+  echo json_encode(["error" => "Faltan datos"]);
+  exit;
+}
+
+// Validar archivo PDF
+if ($archivo['type'] !== 'application/pdf') {
+  http_response_code(400);
+  echo json_encode(["error" => "El archivo debe ser PDF"]);
+  exit;
+}
+
+// Guardar archivo
+$nombreArchivo = uniqid('pago_') . '.pdf';
+$rutaDestino = '../comprobantes/' . $nombreArchivo;
+
+if (!move_uploaded_file($archivo['tmp_name'], $rutaDestino)) {
+  http_response_code(500);
+  echo json_encode(["error" => "Error al guardar el archivo"]);
+  exit;
+}
+
+// Insertar en la base de datos
+$sql = "INSERT INTO pago (IdUsuario, Email, FchaPago, Monto, Comprobante, EstadoPago)
+        VALUES (?, ?, ?, ?, ?, 'pendiente')";
+$stmt = $conn->prepare($sql);
+$stmt->bind_param("issds", $IdUsuario, $Email, $fecha, $monto, $nombreArchivo);
+
+if ($stmt->execute()) {
+  echo json_encode(["status" => "ok"]);
+} else {
+  http_response_code(500);
+  echo json_encode(["error" => "Error al registrar el pago"]);
+}
+
+$stmt->close();
+$conn->close();
 ?>

@@ -16,7 +16,7 @@ if (!$email || !$password) {
 }
 
 // Buscar usuario por email
-$query = "SELECT IdUsuario, Contraseña, Rol FROM usuario WHERE Email = ?";
+$query = "SELECT IdUsuario, Email, Contraseña, Rol FROM usuario WHERE Email = ?";
 $stmt = $conn->prepare($query);
 if (!$stmt) {
     http_response_code(500);
@@ -38,8 +38,15 @@ if (!$user || !password_verify($password, $user['Contraseña'])) {
 
 // Guardar sesión
 $_SESSION['id'] = $user['IdUsuario'];
+$_SESSION['email'] = $user['Email'];
 $_SESSION['rol'] = $user['Rol'];
 
-echo json_encode(["status" => "ok", "rol" => $user['Rol']]);
+// Respuesta al frontend
+echo json_encode([
+    "status" => "ok",
+    "rol" => $user['Rol']
+]);
 
+$stmt->close();
+$conn->close();
 ?>
