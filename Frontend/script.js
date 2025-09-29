@@ -29,7 +29,7 @@ document.addEventListener('DOMContentLoaded', () => {
       };
 
       try {
-        const res = await fetch('../api/registro_horas.php', {
+        const res = await fetch('../api/registrar_horas.php', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(data),

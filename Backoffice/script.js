@@ -13,8 +13,8 @@ document.addEventListener('DOMContentLoaded', () => {
         target.classList.add("activa");
         console.log(`Sección activada: ${item.dataset.target}`);
         if (item.dataset.target === "postulacion") cargarPostulaciones();
-        if (item.dataset.target === "gestion-horas") cargarHoras();
-        if (item.dataset.target === "gestion-pagos") cargarPagos();
+        if (item.dataset.target === "horas") cargarHoras(); // ← corregido
+        if (item.dataset.target === "pago") cargarPagos();  // ← corregido
       } else {
         console.warn(`No se encontró la sección: ${item.dataset.target}`);
       }
@@ -29,6 +29,7 @@ document.addEventListener('DOMContentLoaded', () => {
     try { postulaciones = JSON.parse(text); } catch (e) { console.error("Respuesta inválida:", text); return; }
 
     const tbody = document.querySelector('#postulacion tbody');
+    if (!tbody) return console.error("No se encontró tbody en #postulacion");
     tbody.innerHTML = '';
 
     if (postulaciones.length === 0) {
@@ -61,7 +62,8 @@ document.addEventListener('DOMContentLoaded', () => {
     let horas;
     try { horas = JSON.parse(text); } catch (e) { console.error("Respuesta inválida:", text); return; }
 
-    const tbody = document.querySelector('#tabla-horas tbody');
+    const tbody = document.querySelector('#horas table tbody');
+    if (!tbody) return console.error("No se encontró tbody en #horas");
     tbody.innerHTML = '';
 
     if (horas.length === 0) {
@@ -95,7 +97,8 @@ document.addEventListener('DOMContentLoaded', () => {
     let pagos;
     try { pagos = JSON.parse(text); } catch (e) { console.error("Respuesta inválida:", text); return; }
 
-    const tbody = document.querySelector('#tabla-pagos tbody');
+    const tbody = document.querySelector('#pago table tbody');
+    if (!tbody) return console.error("No se encontró tbody en #pago");
     tbody.innerHTML = '';
 
     if (pagos.length === 0) {
