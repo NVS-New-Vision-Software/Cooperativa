@@ -101,11 +101,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  // 🕓 Formatear hora para quitar los .000000
-  function formatearHora(hora) {
-    return hora.split(':').slice(0, 2).join(':');
-  }
-
+ 
   // ✅ Aprobar o rechazar horas con confirmación
   document.addEventListener('click', e => {
     const btn = e.target;
@@ -294,5 +290,99 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // 🔄 Cargar tabla al iniciar
   cargarPagos();
-  
+
+  // 📋 Cargar postulaciones
+  async function cargarPostulaciones() {
+    try {
+      const res = await fetch('../api/get_postulaciones.php', {
+        method: 'GET',
+        credentials: 'include'
+      });
+
+      const result = await res.json();
+      const tbody = document.querySelector('.tabla-postulaciones tbody');
+      if (!tbody) {
+        console.warn("No se encontró la tabla de postulaciones");
+        return;
+      }
+
+      tbody.innerHTML = '';
+
+      result.forEach(postulacion => {
+        const tr = document.createElement('tr');
+        tr.setAttribute('data-id', String(postulacion.IdPostulacion));
+
+        tr.innerHTML = `
+          <td>${postulacion.IdPostulacion}</td>
+          <td>${postulacion.Pnom} ${postulacion.Pape}</td>
+          <td>${postulacion.Email}</td>
+          <td>${postulacion.FchaSolicitud}</td>
+          <td>${postulacion.estado}</td>
+          <td>
+            <button class="btn-aprobar-postulacion">Aprobar</button>
+            <button class="btn-rechazar-postulacion">Rechazar</button>
+          </td>
+        `;
+
+        tbody.appendChild(tr);
+      });
+    } catch (error) {
+      console.error("Error al cargar postulaciones:", error);
+      alert("No se pudieron cargar las postulaciones");
+    }
+  }
+
+  // ✅ Aprobar o rechazar postulaciones
+  document.addEventListener('click', e => {
+    const btn = e.target;
+    if (!btn.classList.contains('btn-aprobar-postulacion') && !btn.classList.contains('btn-rechazar-postulacion')) return;
+
+    const tr = btn.closest('tr');
+    const idPostulacion = tr.getAttribute('data-id');
+
+    if (btn.classList.contains('btn-aprobar-postulacion')) {
+      const confirmar = confirm("¿Aprobar esta postulación?");
+      if (!confirmar) return;
+      actualizarEstadoPostulacion(idPostulacion, 'aprobada');
+    }
+
+    if (btn.classList.contains('btn-rechazar-postulacion')) {
+      const confirmar = confirm("¿Rechazar esta postulación?");
+      if (!confirmar) return;
+      actualizarEstadoPostulacion(idPostulacion, 'rechazada');
+    }
+  });
+
+  // 🔄 Actualizar estado y eliminar fila
+  async function actualizarEstadoPostulacion(id, estado) {
+    try {
+      const res = await fetch('../api/update_postulacion.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id, estado }),
+        credentials: 'include'
+      });
+
+      const result = await res.json();
+      if (res.ok && result.status === 'ok') {
+        alert(`Postulación ${estado} correctamente`);
+
+        const fila = document.querySelector(`tr[data-id="${String(id)}"]`);
+        if (fila) {
+          fila.style.transition = 'opacity 0.4s ease';
+          fila.style.opacity = '0';
+          setTimeout(() => fila.remove(), 400);
+        }
+      } else {
+        alert(result.error || 'Error al actualizar la postulación');
+      }
+    } catch (error) {
+      console.error("Error al actualizar postulación:", error);
+      alert("No se pudo conectar con el servidor");
+    }
+  }
+
+  // 🔄 Cargar tabla al iniciar
+  cargarPostulaciones();
 });
+

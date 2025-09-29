@@ -72,7 +72,7 @@ document.addEventListener('DOMContentLoaded', () => {
       formData.append('archivo', document.querySelector('.form-pago input[name="archivo"]').files[0]);
 
       try {
-        const res = await fetch('../api/registro_pago.php', {
+        const res = await fetch('../api/registrar_pago.php', {
           method: 'POST',
           body: formData,
           credentials: 'include'

@@ -3,12 +3,6 @@ require_once 'conexion.php';
 session_start();
 header('Content-Type: application/json');
 
-// Validar sesión de administrador
-if (!isset($_SESSION['Rol']) || $_SESSION['Rol'] !== 'admin') {
-  http_response_code(403);
-  echo json_encode(["error" => "Acceso denegado"]);
-  exit;
-}
 
 // Leer cuerpo JSON
 $input = json_decode(file_get_contents("php://input"), true);

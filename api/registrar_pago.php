@@ -3,15 +3,9 @@ require_once 'conexion.php';
 session_start();
 header('Content-Type: application/json');
 
-// Validar sesión
-if (!isset($_SESSION['IdUsuario']) || !isset($_SESSION['Email'])) {
-  http_response_code(401);
-  echo json_encode(["error" => "No autenticado"]);
-  exit;
-}
 
-$IdUsuario = $_SESSION['IdUsuario'];
-$Email = $_SESSION['Email'];
+$IdUsuario = $_SESSION['id'];
+$Email = $_SESSION['email'];
 
 // Validar campos
 $fecha = $_POST['fecha'] ?? null;
@@ -33,7 +27,7 @@ if ($archivo['type'] !== 'application/pdf') {
 
 // Guardar archivo
 $nombreArchivo = uniqid('pago_') . '.pdf';
-$rutaDestino = '../comprobantes/' . $nombreArchivo;
+$rutaDestino = '../Backoffice/comprobantes/' . $nombreArchivo;
 
 if (!move_uploaded_file($archivo['tmp_name'], $rutaDestino)) {
   http_response_code(500);

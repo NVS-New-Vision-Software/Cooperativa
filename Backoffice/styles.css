@@ -184,3 +184,25 @@ header img {
   background-color: #c82333;
   transform: scale(1.05);
 }
+
+/* Botón de aprobar */
+.btn-aprobar-pago {
+  background-color: #28a745;
+  color: white;
+}
+
+.btn-aprobar-pago:hover {
+  background-color: #218838;
+  transform: scale(1.05);
+}
+
+/* Botón de rechazar */
+.btn-rechazar-pago {
+  background-color: #dc3545;
+  color: white;
+}
+
+.btn-rechazar-pago:hover {
+  background-color: #c82333;
+  transform: scale(1.05);
+}
