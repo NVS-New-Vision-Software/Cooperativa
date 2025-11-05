@@ -32,56 +32,101 @@
     </div>
 
     <div id="horas" class="seccion">
-  <h2>Registrar Horas</h2>
-  <p>Formulario para registrar horas de trabajo.</p>
-  <form class="form-horas" action="../api/registrar_horas.php" method="POST">
-  <div class="form-row">
-    <!-- Columna izquierda: fecha, hora inicio, hora fin -->
-    <div class="form-col">
-      <div class="form-grupo">
-        <label for="fecha">Fecha:</label>
-        <input type="date" id="fecha" name="fecha" required>
-      </div>
-      <div class="form-grupo">
-        <label for="horaInicio">Hora de inicio:</label>
-        <input type="time" id="horaInicio" name="horaInicio" required>
-      </div>
-      <div class="form-grupo">
-        <label for="horaFin">Hora de fin:</label>
-        <input type="time" id="horaFin" name="horaFin" required>
-      </div>
-    </div>
+      <h2>Registrar Horas</h2>
+      <p>Formulario para registrar horas de trabajo.</p>
+      <form class="form-horas" action="../api/registrar_horas.php" method="POST">
+        <div class="form-row">
+          <div class="form-col">
+            <div class="form-grupo">
+              <label for="fecha">Fecha:</label>
+              <input type="date" id="fecha" name="fecha" required>
+            </div>
+            <div class="form-grupo">
+              <label for="horaInicio">Hora de inicio:</label>
+              <input type="time" id="horaInicio" name="horaInicio" required>
+            </div>
+            <div class="form-grupo">
+              <label for="horaFin">Hora de fin:</label>
+              <input type="time" id="horaFin" name="horaFin" required>
+            </div>
+          </div>
+            <div class="form-grupo">
+              <label for="descripcion">Descripción de la jornada:</label>
+              <textarea id="descripcion" name="descripcion" rows="6" placeholder="Describe lo que realizaste hoy..." required></textarea>
+          </div>
+        </div>
 
-    <div class="form-col">
-      <div class="form-grupo">
-        <label for="descripcion">Descripción de la jornada:</label>
-        <textarea id="descripcion" name="descripcion" rows="6" placeholder="Describe lo que realizaste hoy..." required></textarea>
-      </div>
-    </div>
-  </div>
-
-  <button type="submit" class="btn-horas">Registrar Horas</button>
-</form>
+        <button type="submit" class="btn-horas">Registrar Horas</button>
+      </form>
     </div>
 
     <div id="pago" class="seccion">
       <h2>Aportar Pago</h2>
       <p>Sección para aportar pagos.</p>
       <form class="form-pago" action="../api/registrar_pago.php" method="POST" enctype="multipart/form-data">
-        <label for="fecha">Fecha:</label>
-        <input type="date" id="fecha" name="fecha" required>
-        <label for="monto">Monto:</label>
-        <input type="number" id="monto" name="monto" step="0.01" placeholder="0.00" required>
-        <label for="archivo">Adjuntar PDF:</label>
-        <input type="file" id="archivo" name="archivo" accept="application/pdf" required>
-        <button type="submit" class="btn-pago">Enviar</button>
+        <div class="form-row">
+          <div class="form-col">
+            <div class="form-grupo">
+              <label for="fecha">Fecha:</label>
+              <input type="date" id="fecha" name="fecha" required>
+            </div>
+            <div class="form-grupo">
+              <label for="monto">Monto:</label>
+              <input type="number" id="monto" name="monto" step="0.01" placeholder="0.00" required>
+            </div>
+          </div>
+          <div class="form-grupo">
+            <label for="archivo">Adjuntar PDF:</label>
+            <input type="file" id="archivo" name="archivo" accept="application/pdf" required>
+          </div>
+        </div>
+
+        <button type="submit" class="btn-pago">Enviar Pago</button>
       </form>
     </div>
 
     <div id="reporte" class="seccion">
-      <h2>Solicitar Reporte</h2>
-      <p>Aquí podrás solicitar reportes.</p>
+    <h2>Ver Historiales</h2>
+    <p>Sección para ver pagos y horas registradas.</p>
+
+    <div class="historial">
+
+    <h3>Historial de Horas de Trabajo</h3>
+    <table class="tabla-historial tabla-horas">
+        <thead>
+            <tr>
+              <th>Fecha</th>
+              <th>Inicio</th>
+              <th>Fin</th>
+              <th>Descripción</th>
+              <th>Estado</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+              <td colspan="5">Los datos se cargarán aquí automáticamente.</td>
+            </tr>
+        </tbody>
+    </table>
+    
+    <h3>Historial de Pagos Realizados</h3>
+    <table class="tabla-historial tabla-pagos">
+        <thead>
+            <tr>
+                <th>Fecha Pago</th>
+                <th>Monto</th>
+                <th>Comprobante</th>
+                <th>Estado</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td colspan="4">Los datos se cargarán aquí automáticamente.</td>
+            </tr>
+        </tbody>
+    </table>
     </div>
+</div>
 
     <div id="obra" class="seccion">
       <h2>Avances de Obra</h2>

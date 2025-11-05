@@ -1,104 +1,215 @@
 document.addEventListener('DOMContentLoaded', () => {
-  console.log("Script cargado");
+  console.log("Script cargado");
 
-  // 🧭 Navegación entre secciones
-  const items = document.querySelectorAll(".lateral li");
-  const secciones = document.querySelectorAll(".seccion");
+  // --- INICIO: Código Nuevo - Funciones de Carga de Historial (GET) ---
 
-  items.forEach(item => {
-    item.addEventListener("click", () => {
-      secciones.forEach(sec => sec.classList.remove("activa"));
-      const target = document.getElementById(item.dataset.target);
-      if (target) {
-        target.classList.add("activa");
-      }
-    });
-  });
+    // Asume que las APIs GET devuelven un array JSON de datos.
+    async function cargarHistorialHoras() {
+        const tablaBody = document.querySelector('.tabla-horas tbody');
+        if (!tablaBody) return;
 
-  // 🕒 Registro de horas
-  const formHoras = document.querySelector('.form-horas');
-  if (formHoras) {
-    formHoras.addEventListener('submit', async e => {
-      e.preventDefault();
+        tablaBody.innerHTML = '<tr><td colspan="5">Cargando historial de horas...</td></tr>'; 
 
-      const data = {
-        fecha: document.querySelector('#fecha').value,
-        horaInicio: document.querySelector('#horaInicio').value,
-        horaFin: document.querySelector('#horaFin').value,
-        descripcion: document.querySelector('#descripcion').value
-      };
-
-      try {
-        const res = await fetch('/Cooperativa/api/registrar_horas.php', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(data),
-          credentials: 'include'
-        });
-
-        const text = await res.text();
-        console.log("Respuesta del servidor (horas):", text);
-
-        let result;
         try {
-          result = JSON.parse(text);
-        } catch (e) {
-          alert("Respuesta inválida del servidor");
-          return;
+            // Ajusta esta URL si es necesario
+            const response = await fetch('/Cooperativa/api/get_horas.php'); 
+            if (!response.ok) throw new Error(`Error HTTP: ${response.status}`);
+            
+            const horas = await response.json();
+            tablaBody.innerHTML = ''; 
+
+            if (horas.length === 0) {
+                tablaBody.innerHTML = '<tr><td colspan="5">No hay horas registradas.</td></tr>';
+                return;
+            }
+
+            horas.forEach(hora => {
+                const fila = `
+                    <tr>
+                        <td>${hora.FchaHoras}</td>
+                        <td>${hora.HoraInicio ? hora.HoraInicio.substring(0, 5) : ''}</td>
+                        <td>${hora.HoraFin ? hora.HoraFin.substring(0, 5) : ''}</td>
+                        <td>${hora.Descripción}</td>
+                        <td><strong>${hora.EstadoHoras}</strong></td>
+                    </tr>
+                `;
+                tablaBody.insertAdjacentHTML('beforeend', fila);
+            });
+
+        } catch (error) {
+            console.error('Error al cargar historial de horas:', error);
+            tablaBody.innerHTML = `<tr><td colspan="5" style="color: red;">Error al obtener los datos.</td></tr>`;
         }
+    }
 
-        if (res.ok && result.status === 'ok') {
-          alert('Horas registradas correctamente');
-          formHoras.reset();
-        } else {
-          alert(result.error || 'Error al registrar horas');
-        }
-      } catch (error) {
-        console.error("Error de red (horas):", error);
-        alert("No se pudo conectar con el servidor");
-      }
-    });
-  }
+    async function cargarHistorialPagos() {
+        const tablaBody = document.querySelector('.tabla-pagos tbody');
+        if (!tablaBody) return;
+        
+        tablaBody.innerHTML = '<tr><td colspan="4">Cargando historial de pagos...</td></tr>'; 
 
-  // 💰 Registro de pago
-  const formPago = document.querySelector('.form-pago');
-  if (formPago) {
-    formPago.addEventListener('submit', async e => {
-      e.preventDefault();
-
-      const formData = new FormData();
-      formData.append('fecha', document.querySelector('.form-pago input[name="fecha"]').value);
-      formData.append('monto', document.querySelector('.form-pago input[name="monto"]').value);
-      formData.append('archivo', document.querySelector('.form-pago input[name="archivo"]').files[0]);
-
-      try {
-        const res = await fetch('../api/registrar_pago.php', {
-          method: 'POST',
-          body: formData,
-          credentials: 'include'
-        });
-
-        const text = await res.text();
-        console.log("Respuesta del servidor (pago):", text);
-
-        let result;
         try {
-          result = JSON.parse(text);
-        } catch (e) {
-          alert("Respuesta inválida del servidor");
-          return;
-        }
+            // Ajusta esta URL si es necesario
+            const response = await fetch('/Cooperativa/api/get_pagos.php'); 
+            if (!response.ok) throw new Error(`Error HTTP: ${response.status}`);
+            
+            const pagos = await response.json();
+            tablaBody.innerHTML = ''; 
 
-        if (res.ok && result.status === 'ok') {
-          alert('Pago registrado correctamente');
-          formPago.reset();
-        } else {
-          alert(result.error || 'Error al registrar pago');
+            if (pagos.length === 0) {
+                tablaBody.innerHTML = '<tr><td colspan="4">No hay pagos registrados.</td></tr>';
+                return;
+            }
+
+            pagos.forEach(pago => {
+                const montoFormateado = `$${parseFloat(pago.Monto).toFixed(2)}`;
+                const enlaceComprobante = pago.Comprobante 
+                    ? `<a href="${pago.Comprobante}" target="_blank">Ver PDF</a>` 
+                    : 'N/A';
+                
+                const fila = `
+                    <tr>
+                        <td>${pago.FchaPago}</td>
+                        <td>${montoFormateado}</td>
+                        <td>${enlaceComprobante}</td>
+                        <td><strong>${pago.EstadoPago}</strong></td>
+                    </tr>
+                `;
+                tablaBody.insertAdjacentHTML('beforeend', fila);
+            });
+
+        } catch (error) {
+            console.error('Error al cargar historial de pagos:', error);
+            tablaBody.innerHTML = `<tr><td colspan="4" style="color: red;">Error al obtener los datos.</td></tr>`;
         }
-      } catch (error) {
-        console.error("Error de red (pago):", error);
-        alert("No se pudo conectar con el servidor");
-      }
-    });
-  }
+    }
+
+  // --- FIN: Código Nuevo - Funciones de Carga de Historial (GET) ---
+
+
+  // 🧭 Navegación entre secciones
+  const items = document.querySelectorAll(".lateral li");
+  const secciones = document.querySelectorAll(".seccion");
+
+  items.forEach(item => {
+    item.addEventListener("click", () => {
+      secciones.forEach(sec => sec.classList.remove("activa"));
+      const target = document.getElementById(item.dataset.target);
+      if (target) {
+        target.classList.add("activa");
+        
+        // --- INICIO: Código Nuevo - Lógica de navegación para cargar historiales ---
+        if (item.dataset.target === 'reporte') {
+            cargarHistorialHoras();
+            cargarHistorialPagos();
+        }
+        // --- FIN: Código Nuevo - Lógica de navegación para cargar historiales ---
+      }
+    });
+  });
+
+  // 🕒 Registro de horas
+  const formHoras = document.querySelector('.form-horas');
+  if (formHoras) {
+    formHoras.addEventListener('submit', async e => {
+      e.preventDefault();
+
+      const data = {
+        fecha: document.querySelector('#fecha').value,
+        horaInicio: document.querySelector('#horaInicio').value,
+        horaFin: document.querySelector('#horaFin').value,
+        descripcion: document.querySelector('#descripcion').value
+      };
+        
+        // NOTA: Para POST con FormData (si el backend espera $_POST), usa este bloque:
+        /*
+        const formData = new FormData();
+        formData.append('fecha', document.querySelector('#fecha').value);
+        // ... (otros campos)
+        */
+
+      try {
+        const res = await fetch('/Cooperativa/api/registrar_horas.php', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' }, // Si tu API espera JSON
+          body: JSON.stringify(data), // Si tu API espera JSON
+          credentials: 'include'
+        });
+
+        const text = await res.text();
+        console.log("Respuesta del servidor (horas):", text);
+
+        let result;
+        try {
+          result = JSON.parse(text);
+        } catch (e) {
+          alert("Respuesta inválida del servidor");
+          return;
+        }
+
+        if (res.ok && result.status === 'ok') {
+          alert('Horas registradas correctamente');
+          formHoras.reset();
+            
+            // --- INICIO: Código Nuevo - Actualizar historial después del éxito ---
+            cargarHistorialHoras(); 
+            // --- FIN: Código Nuevo - Actualizar historial después del éxito ---
+            
+        } else {
+          alert(result.error || 'Error al registrar horas');
+        }
+      } catch (error) {
+        console.error("Error de red (horas):", error);
+        alert("No se pudo conectar con el servidor");
+      }
+    });
+  }
+
+  // 💰 Registro de pago
+  const formPago = document.querySelector('.form-pago');
+  if (formPago) {
+    formPago.addEventListener('submit', async e => {
+      e.preventDefault();
+
+      const formData = new FormData();
+        // NOTA: Usando 'fecha_pago' que definimos en el HTML
+      formData.append('fecha_pago', document.querySelector('#fecha_pago').value); 
+      formData.append('monto', document.querySelector('#monto').value);
+      formData.append('archivo', document.querySelector('.form-pago input[name="archivo"]').files[0]);
+
+      try {
+        const res = await fetch('../api/registrar_pago.php', {
+          method: 'POST',
+          body: formData,
+          credentials: 'include'
+        });
+
+        const text = await res.text();
+        console.log("Respuesta del servidor (pago):", text);
+
+        let result;
+        try {
+          result = JSON.parse(text);
+        } catch (e) {
+          alert("Respuesta inválida del servidor");
+          return;
+        }
+
+        if (res.ok && result.status === 'ok') {
+          alert('Pago registrado correctamente');
+          formPago.reset();
+
+            // --- INICIO: Código Nuevo - Actualizar historial después del éxito ---
+            cargarHistorialPagos();
+            // --- FIN: Código Nuevo - Actualizar historial después del éxito ---
+            
+        } else {
+          alert(result.error || 'Error al registrar pago');
+        }
+      } catch (error) {
+        console.error("Error de red (pago):", error);
+        alert("No se pudo conectar con el servidor");
+      }
+    });
+  }
 });

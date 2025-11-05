@@ -81,8 +81,8 @@ document.addEventListener('DOMContentLoaded', () => {
           <td>${registro.IdHoras}</td>
           <td>${registro.Email}</td>
           <td>${registro.FchaHoras}</td>
-          <td>${formatearHora(registro.HoraInicio)}</td>
-          <td>${formatearHora(registro.HoraFin)}</td>
+          <td>${registro.HoraInicio}</td>
+          <td>${registro.HoraFin}</td>
           <td>${registro.Descripción}</td>
           <td>${registro.EstadoHoras}</td>
           <td>
@@ -291,7 +291,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // 🔄 Cargar tabla al iniciar
   cargarPagos();
 
-  // 📋 Cargar postulaciones
+ // 📋 Cargar postulaciones
   async function cargarPostulaciones() {
     try {
       const res = await fetch('../api/get_postulaciones.php', {
@@ -300,7 +300,7 @@ document.addEventListener('DOMContentLoaded', () => {
       });
 
       const result = await res.json();
-      const tbody = document.querySelector('.tabla-postulaciones tbody');
+      const tbody = document.querySelector('#postulacion .tablas tbody');
       if (!tbody) {
         console.warn("No se encontró la tabla de postulaciones");
         return;
@@ -314,10 +314,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
         tr.innerHTML = `
           <td>${postulacion.IdPostulacion}</td>
-          <td>${postulacion.Pnom} ${postulacion.Pape}</td>
+          <td>${postulacion.Pnom}</td>
+          <td>${postulacion.Pape}</td>
           <td>${postulacion.Email}</td>
-          <td>${postulacion.FchaSolicitud}</td>
           <td>${postulacion.estado}</td>
+          <td>${postulacion.FchaSolicitud}</td>
           <td>
             <button class="btn-aprobar-postulacion">Aprobar</button>
             <button class="btn-rechazar-postulacion">Rechazar</button>
@@ -385,4 +386,3 @@ document.addEventListener('DOMContentLoaded', () => {
   // 🔄 Cargar tabla al iniciar
   cargarPostulaciones();
 });
-
