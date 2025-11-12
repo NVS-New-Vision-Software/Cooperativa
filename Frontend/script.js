@@ -1,6 +1,31 @@
 document.addEventListener('DOMContentLoaded', () => {
   console.log("Script cargado");
 
+    const userRole = localStorage.getItem('user_rol');
+    
+    // Usamos querySelector para buscar el <li> con el atributo data-target="admin"
+    const adminMenuItem = document.querySelector('li[data-target="admin"]');
+    
+    const adminPageUrl = '../Backoffice/backoffice.html'; // URL de la página de administración
+
+    if (adminMenuItem) {
+        if (userRole === 'admin') {
+            
+            // 1. Mostrar el elemento si el rol es 'admin'
+            // NOTA: 'list-item' es el valor correcto para un <li>
+            adminMenuItem.style.display = 'list-item'; 
+
+            // 2. Agregar el manejador de clic para redirigir a la página de administración
+            adminMenuItem.addEventListener('click', function() {
+                window.location.href = adminPageUrl;
+            });
+            
+        } else {
+            // Si no es admin, aseguramos que esté oculto
+            adminMenuItem.style.display = 'none';
+        }
+    }
+
   // --- INICIO: Código Nuevo - Funciones de Carga de Historial (GET) ---
 
     // Asume que las APIs GET devuelven un array JSON de datos.
@@ -64,7 +89,7 @@ document.addEventListener('DOMContentLoaded', () => {
             pagos.forEach(pago => {
                 const montoFormateado = `$${parseFloat(pago.Monto).toFixed(2)}`;
                 const enlaceComprobante = pago.Comprobante 
-                    ? `<a href="${pago.Comprobante}" target="_blank">Ver PDF</a>` 
+                    ? `<a href="/Cooperativa/Backoffice/comprobantes/${pago.Comprobante}" target="_blank">Ver PDF</a>` 
                     : 'N/A';
                 
                 const fila = `
@@ -171,14 +196,10 @@ document.addEventListener('DOMContentLoaded', () => {
     formPago.addEventListener('submit', async e => {
       e.preventDefault();
 
-      const formData = new FormData();
-        // NOTA: Usando 'fecha_pago' que definimos en el HTML
-      formData.append('fecha_pago', document.querySelector('#fecha_pago').value); 
-      formData.append('monto', document.querySelector('#monto').value);
-      formData.append('archivo', document.querySelector('.form-pago input[name="archivo"]').files[0]);
+const formData = new FormData(formPago);
 
       try {
-        const res = await fetch('../api/registrar_pago.php', {
+        const res = await fetch('/Cooperativa/api/registrar_pago.php', {
           method: 'POST',
           body: formData,
           credentials: 'include'
@@ -213,3 +234,4 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 });
+

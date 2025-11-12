@@ -1,8 +1,8 @@
 <?php
-require 'conexion.php';
+include 'conexion.php'; 
 header('Content-Type: application/json');
 
-$sql = "SELECT IdPostulacion, Pnom, Pape, Email, estado, FchaSolicitud FROM postulaciones ORDER BY FchaSolicitud DESC";
+$sql = "SELECT IdPostulacion, Pnom, Pape, Email, estado, FchaSolicitud FROM postulaciones  WHERE estado = 'pendiente' ORDER BY FchaSolicitud DESC";
 $result = $conn->query($sql);
 
 $postulaciones = [];

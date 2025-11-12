@@ -20,7 +20,7 @@
         <li data-target="horas"><img src="horas.png" alt="">Gestionar Horas</li>
         <li data-target="pago"><img src="pago.png" alt="">Gestionar Pago</li>
         <li data-target="postulacion"><img src="reporte.png" alt="">Gestionar Postulaciones</li>
-        <li data-target="obra"><img src="obra.png" alt="">Gestionar Obra</li>
+        <li data-target="vivienda"><img src="obra.png" alt="">Gestionar Viviendas</li>
         <li data-target="perfil"><img src="perfil.png" alt="">Gestionar Perfiles</li>
       </ul>
     </nav>
@@ -102,16 +102,73 @@
   </table>
     </div>
 
-    <div id="obra" class="seccion">
-      <h2>Gestionar Obra</h2>
-      <p>Información sobre el progreso de la obra.</p>
+    <div id="vivienda" class="seccion">
+    <h2>Gestionar Unidades de Vivienda</h2>
+
+    <div class="form-contenedor">
+        <h3>Crear Nueva Unidad de Vivienda</h3>
+        <form id="formCrearVivienda" class="form-vivienda">
+            <label for="nroVivienda">Número de Vivienda:</label>
+            <input type="text" id="nroVivienda" name="nroVivienda" required>
+            <button type="submit" class="btn-principal">Crear Vivienda</button>
+            <p id="mensajeVivienda"></p>
+        </form>
     </div>
 
-    <div id="perfil" class="seccion">
-      <h2>Gestionar Usuarios</h2>
-      <p>Datos personales y configuración.</p>
+    <hr>
+
+    <div class="tabla-contenedor">
+        <h3>Listado de Viviendas</h3>
+        <table class="tablas">
+            <thead>
+                <tr>
+                    <th>ID Vivienda</th>
+                    <th>Número</th>
+                    <th>ID Socio Asignado</th>
+                    <th>Asignado a (Usuario)</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody id="viviendasTableBody">
+                <tr><td colspan="5" style="text-align: center;">Cargando unidades de vivienda...</td></tr>
+            </tbody>
+        </table>
     </div>
-  </div>
+</div>
+
+   <div id="perfil" class="seccion">
+    <h2>Gestionar Usuarios</h2>
+    <p> Acá podrás gestionar la información de los usuarios</p>
+
+    <table class="tablas">
+        <thead>
+            <tr>
+                <th>ID Usuario</th>
+                <th>ID Socio</th>
+                <th>Primer Nombre</th>
+                <th>Primer Apellido</th>
+                <th>Email</th>
+                <th>Rol</th>
+                <th>Vivienda</th>
+                <th>Fecha Ingreso</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody id="usuariosTableBody">
+            <tr>
+                <td colspan="9" style="text-align: center;">Cargando usuarios...</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <hr> 
+    
+    <div class="detalles-socio-contenedor">
+        <div id="socioDetailsContainer">
+            <p>Selecciona el botón "Ver Socio" o "Ver Historial" en la tabla para cargar la información.</p>
+        </div>
+    </div>
+</div>
 
   <script src="script.js"></script>
 </body>

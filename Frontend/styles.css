@@ -12,29 +12,41 @@ body {
   background-position: center;
   background-attachment: fixed;
   background-repeat: no-repeat;
-  overflow: hidden;
+  overflow-x: hidden;
 }
 
 /* HEADER */
 header {
-  background-color: #213B5C;
-  display: flex;
-  justify-content: space-between;
-  padding: 5px 30px;
-  align-items: center;
+    background-color: #213B5C;
+    display: flex;
+    justify-content: space-between;
+    /* Reducir el padding para que no se sume tanto a la altura base */
+    padding: 15px 30px; /* Ejemplo de un padding razonable */
+    align-items: center;
+    position: fixed;
+    width: 100%;
+    top: 0;
+    /* Añadir un z-index para asegurarnos que siempre esté arriba */
+    z-index: 1000; 
+    
+    /* Nota: Con 15px de padding arriba y abajo, la altura total es ~60px (sin contar el contenido interno).
+       Vamos a asumir que la altura total del header es aproximadamente 90px para seguridad.
+    */
 }
 
 header img {
-  height: 60px;
-  width: auto;
-  margin-top: 20px;
+    height: 60px;
+    width: auto;
+    /* Eliminar el margin-top de la imagen si el padding del header ya es suficiente */
+    margin-top: 0; 
 }
 
 .lateral {
-  position: absolute;
+  position: fixed;
   height: 100%;
   width: 300px;
   background-color: white;
+  margin-top: 80px;
 }
 
 .lateral li {
@@ -68,6 +80,10 @@ header img {
   transform: scale(1.05);
 }
 
+li[data-target="admin"] {
+    display: none; 
+}
+
 
 /* BOTÓN LOGOUT */
 .logout-button {
@@ -99,11 +115,12 @@ header img {
   padding: 20px;
   position: relative; /* necesario para que los hijos absolutos se apilen aquí */
   min-height: 400px;  /* ajusta según tu contenido */
+  
 }
 
 .seccion {
   position: absolute;
-  top: 0;
+  top: 100px;
   left: 0;
   right: 0;
   opacity: 0;

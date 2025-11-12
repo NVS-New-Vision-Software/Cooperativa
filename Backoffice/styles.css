@@ -12,29 +12,41 @@ body {
   background-position: center;
   background-attachment: fixed;
   background-repeat: no-repeat;
-  overflow: hidden;
+  overflow-x: hidden;
 }
 
 /* HEADER */
 header {
-  background-color: #213B5C;
-  display: flex;
-  justify-content: space-between;
-  padding: 5px 30px;
-  align-items: center;
+    background-color: #213B5C;
+    display: flex;
+    justify-content: space-between;
+    /* Reducir el padding para que no se sume tanto a la altura base */
+    padding: 15px 30px; /* Ejemplo de un padding razonable */
+    align-items: center;
+    position: fixed;
+    width: 100%;
+    top: 0;
+    /* Añadir un z-index para asegurarnos que siempre esté arriba */
+    z-index: 1000; 
+    
+    /* Nota: Con 15px de padding arriba y abajo, la altura total es ~60px (sin contar el contenido interno).
+       Vamos a asumir que la altura total del header es aproximadamente 90px para seguridad.
+    */
 }
 
 header img {
-  height: 60px;
-  width: auto;
-  margin-top: 20px;
+    height: 60px;
+    width: auto;
+    /* Eliminar el margin-top de la imagen si el padding del header ya es suficiente */
+    margin-top: 0; 
 }
 
 .lateral {
-  position: absolute;
+  position: fixed;
   height: 100%;
   width: 300px;
   background-color: white;
+  margin-top: 80px;
 }
 
 .lateral li {
@@ -67,6 +79,7 @@ header img {
   background-color: #1a2e4d;
   transform: scale(1.05);
 }
+
 
 
 /* BOTÓN LOGOUT */
@@ -102,16 +115,13 @@ header img {
 
 .seccion {
   position: absolute;
-  top: 0;
+  top: 100px;
   left: 0;
   right: 0;
-
   opacity: 0;
   transform: translateY(20px);
   pointer-events: none;
-
   transition: opacity 0.5s ease, transform 0.5s ease;
-
   background: rgba(255,255,255,0.9);
   padding: 20px;
   border-radius: 10px;
@@ -187,8 +197,15 @@ header img {
 
 /* Botón de aprobar */
 .btn-aprobar-pago {
-  background-color: #28a745;
+   background-color: #28a745;
   color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+  margin: 2px;
+  transition: background-color 0.3s, transform 0.2s;
 }
 
 .btn-aprobar-pago:hover {
@@ -200,9 +217,164 @@ header img {
 .btn-rechazar-pago {
   background-color: #dc3545;
   color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+  margin: 2px;
+  transition: background-color 0.3s, transform 0.2s;
 }
 
 .btn-rechazar-pago:hover {
+  background-color: #c82333;
+  transform: scale(1.05);
+}
+
+.btn-aprobar-postulacion {
+   background-color: #28a745;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+  margin: 2px;
+  transition: background-color 0.3s, transform 0.2s;
+}
+
+.btn-aprobar-postulacion:hover {
+  background-color: #218838;
+  transform: scale(1.05);
+}
+
+/* Botón de rechazar */
+.btn-rechazar-postulacion {
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+  margin: 2px;
+  transition: background-color 0.3s, transform 0.2s;
+}
+
+.btn-rechazar-postulacion:hover {
+  background-color: #c82333;
+  transform: scale(1.05);
+}
+
+.detalles-socio-contenedor {
+    margin-top: 40px;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background-color: #f7f7f7;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+/* Estilo específico para el div donde se inyecta la información */
+#socioDetailsContainer {
+    padding: 15px;
+    border: none; /* Quitamos el borde interno ya que el contenedor padre lo tiene */
+    border-radius: 5px;
+}
+
+/* Estilo para los títulos de sección dentro del contenedor */
+.detalles-socio-contenedor h2, .detalles-socio-contenedor h3 {
+    color: black;
+    border-bottom: 2px solid #213B5C;
+    padding-bottom: 5px;
+    margin-top: 20px;
+    margin-bottom: 15px;
+}
+
+/* ================================================= */
+/* === Estilos para las Tablas de Historial (JS) === */
+/* ================================================= */
+
+/* Estilos de las tablas que se generan dentro del historial */
+.tabla-historial {
+    width: 98%; /* Ligeramente más pequeña para margen */
+    border-collapse: collapse;
+    margin: 15px auto 30px auto;
+    background: white;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+    border-radius: 5px;
+    overflow: hidden;
+    text-align: center;
+}
+
+.tabla-historial:hover{
+    background-color: #f1f5fa;
+}
+
+.tabla-historial th {
+    background-color: #213B5C; /* Color diferente para distinguir del encabezado principal */
+    color: white;
+    padding: 10px 15px;
+    font-weight: bold;
+    
+}
+
+.tabla-historial td {
+    padding: 8px 15px;
+    border-bottom: 1px solid #eee;
+}
+
+.tabla-historial tr:last-child td {
+    border-bottom: none;
+}
+
+.btn-ver-socio {
+    background-color: #28a745;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+  margin: 2px;
+  transition: background-color 0.3s, transform 0.2s;
+}
+
+.btn-historial {
+    background-color: #28a745;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+  margin: 2px;
+  transition: background-color 0.3s, transform 0.2s;
+}
+
+.btn-eliminar {
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+  margin: 2px;
+  transition: background-color 0.3s, transform 0.2s;
+}
+
+.btn-ver-socio:hover {
+    background-color: #218838;
+  transform: scale(1.05);
+}
+
+.btn-historial:hover {
+    background-color: #218838;
+  transform: scale(1.05);
+}
+
+.btn-eliminar:hover {
   background-color: #c82333;
   transform: scale(1.05);
 }
