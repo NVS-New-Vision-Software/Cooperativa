@@ -391,50 +391,89 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // =========================================================
-  // === NUEVA LÓGICA: GESTIÓN DE USUARIOS ===
-  // =========================================================
-    
-  // --- FUNCIÓN 1: CARGAR TABLA INICIAL (get_usuarios.php) ---
-  async function cargarTablaUsuarios() {
-      const tableBody = document.getElementById('usuariosTableBody');
-      if (!tableBody) return;
+// === DECLARACIONES Y VARIABLES GLOBALES ===
+// =========================================================
+let viviendasDisponibles = []; // Variable global para guardar las viviendas libres
+const API_USUARIOS = '../api/get_usuarios.php';
+const API_GESTIONAR = '../api/gestionar_vivienda.php';
+// NOTA: Asumo que otras APIs (update_rol.php, delete_usuario.php, get_socio_details.php)
+// existen en el directorio '../api/'
+// NOTA: La variable tablaBody está definida al final de este script.
 
-      try {
-          // LLAMADA A LA API get_usuarios.php
-          const response = await fetch('../api/get_usuarios.php');
-          const data = await response.json();
+// =========================================================
+// === FUNCIÓN 1: CARGAR TABLA INICIAL (get_usuarios.php) ===
+// =========================================================
+async function cargarTablaUsuarios() {
+    const tableBody = document.getElementById('usuariosTableBody');
+    if (!tableBody) return;
 
-          if (data.status !== 'ok') {
-              alert(`Error al cargar usuarios: ${data.error}`);
-              tableBody.innerHTML = `<tr><td colspan="9" style="text-align: center;">Error al cargar usuarios: ${data.error}</td></tr>`;
-              return;
-          }
+    try {
+        // LLAMADA A LA API get_usuarios.php
+        const response = await fetch(API_USUARIOS);
+        const data = await response.json();
 
-          tableBody.innerHTML = ''; // Limpiar contenido anterior
-          
-          data.usuarios.forEach(usuario => {
-              const row = crearFilaUsuario(usuario);
-              tableBody.appendChild(row);
-          });
+        if (data.status !== 'ok') {
+            alert(`Error al cargar usuarios: ${data.error}`);
+            tableBody.innerHTML = `<tr><td colspan="9" style="text-align: center;">Error al cargar usuarios: ${data.error}</td></tr>`;
+            return;
+        }
 
-      } catch (error) {
-          console.error('Error de conexión al cargar la tabla:', error);
-          alert('No se pudo conectar con el servidor para obtener datos de usuarios.');
-          tableBody.innerHTML = `<tr><td colspan="9" style="text-align: center;">Error de conexión con el servidor.</td></tr>`;
-      }
-  }
+        // 🟢 CLAVE: Llenar la variable global con la lista de disponibles
+        viviendasDisponibles = data.viviendas_disponibles || []; 
+        
+        tableBody.innerHTML = ''; // Limpiar contenido anterior
+        
+        data.usuarios.forEach(usuario => {
+            const row = crearFilaUsuario(usuario);
+            tableBody.appendChild(row);
+        });
 
-  // --- FUNCIÓN AUXILIAR: CREAR FILA HTML y botones de acción ---
-  // Dentro de script.js, en la función crearFilaUsuario(u)
+    } catch (error) {
+        console.error('Error de conexión al cargar la tabla:', error);
+        alert('No se pudo conectar con el servidor para obtener datos de usuarios.');
+        tableBody.innerHTML = `<tr><td colspan="9" style="text-align: center;">Error de conexión con el servidor.</td></tr>`;
+    }
+}
+
+
+// =========================================================
+// === FUNCIÓN AUXILIAR: CREAR FILA HTML y botones de acción ===
+// =========================================================
 function crearFilaUsuario(u) {
     const row = document.createElement('tr');
     row.dataset.idUsuario = u.IdUsuario;
     row.dataset.idSocio = u.IdSocio;
     
-    // Si la vivienda no se trae de la base de datos (como en tu última consulta)
-    const viviendaDisplay = u.NroVivienda === 'No asignada' ? 'N/A' : u.NroVivienda; 
+    // Asumo que 'viviendasDisponibles' es una variable global Llenada por la función de carga.
+    const listaViviendasDisponibles = typeof viviendasDisponibles !== 'undefined' ? viviendasDisponibles : [];
+
+    // --- LÓGICA DE VIVIENDA ---
+    let viviendaHTML;
+    let accionesViviendaHTML = '';
     
-    // Generar el SELECT con las opciones de rol
+    if (u.NroViviendaAsignada) {
+        // Opción 1: Vivienda Asignada (Muestra número y botón Desasignar)
+        viviendaHTML = `Vivienda ${u.NroViviendaAsignada}`;
+        accionesViviendaHTML = `<button class="btn-desasignar-vivienda" data-socio-id="${u.IdSocio}">Desasignar</button>`;
+    } else {
+        // Opción 2: Sin Asignar (Muestra SELECT para Asignar)
+        const opcionesViviendas = listaViviendasDisponibles.map(v => 
+            `<option value="${v.IdVivienda}">Vivienda ${v.NroVivienda}</option>`
+        ).join('');
+        
+        viviendaHTML = `
+            <select 
+                class="select-vivienda-asignar" 
+                data-socio-id="${u.IdSocio}" 
+                data-current-vivienda="" 
+                ${listaViviendasDisponibles.length === 0 ? 'disabled' : ''}>
+                <option value="" disabled selected>Asignar...</option>
+                ${opcionesViviendas}
+            </select>`;
+        accionesViviendaHTML = ''; // La acción está en el select
+    }
+    
+    // Generar el SELECT con las opciones de rol (se mantiene igual)
     const rolSelect = `
         <select class="select-rol" data-usuario-id="${u.IdUsuario}">
             <option value="socio" ${u.Rol === 'socio' ? 'selected' : ''}>Socio</option>
@@ -442,219 +481,625 @@ function crearFilaUsuario(u) {
         </select>
     `;
 
-    // Botones de acción (Mantenemos la lógica de visibilidad basada en IdSocio, si aplica)
-    const accionesHTML = `
-        ${u.IdSocio !== 'N/A' ? 
+    // Botones de acción (Añadimos el botón de Desasignar)
+    const accionesSocioHTML = `
+        ${u.IdSocio !== 'N/A' && u.IdSocio !== null ? // Verifica si hay IdSocio
             `<button class="btn-ver-socio" data-socio-id="${u.IdSocio}">Ver Socio</button>
              <button class="btn-historial" data-socio-id="${u.IdSocio}">Ver Historial</button>`
             : ''
         }
-        <button class="btn-eliminar" data-usuario-id="${u.IdUsuario}">Eliminar</button>
     `;
+
+    // Asegura que FchaIngreso no sea null antes de intentar substring
+    const fechaIngresoDisplay = u.FchaIngreso ? u.FchaIngreso.substring(0, 10) : 'N/A';
 
     row.innerHTML = `
         <td>${u.IdUsuario}</td>
-        <td>${u.IdSocio}</td>
+        <td>${u.IdSocio || 'N/A'}</td>
         <td>${u.NombreUsuario}</td>
         <td>${u.ApellidoUsuario}</td>
         <td>${u.Email}</td>
-        <td data-current-rol="${u.Rol}">${rolSelect}</td> <td>${viviendaDisplay}</td>
-        <td>${u.FchaIngreso.substring(0, 10)}</td>
+        <td data-current-rol="${u.Rol}">${rolSelect}</td> 
+        <td data-current-vivienda="${u.IdViviendaAsignada || ''}">${viviendaHTML}</td>
+        <td>${fechaIngresoDisplay}</td>
         <td>
-            ${accionesHTML}
+            ${accionesSocioHTML}
+            ${accionesViviendaHTML}
+            <button class="btn-eliminar" data-usuario-id="${u.IdUsuario}">Eliminar</button>
         </td>
     `;
     return row;
 }
 
-// === FUNCIÓN 2: GESTIONAR CAMBIO DE ROL MEDIANTE SELECT ===
-  document.addEventListener('change', async e => {
-      const selectRol = e.target;
-      if (!selectRol.classList.contains('select-rol')) return;
 
-      const idUsuario = selectRol.dataset.usuarioId;
-      const nuevoRol = selectRol.value;
-      const fila = selectRol.closest('tr');
-      const tdRol = selectRol.closest('td');
-      const rolAnterior = tdRol.dataset.currentRol;
-      
-      // 1. Solicitud de confirmación
-      const confirmar = confirm(`¿Estás seguro de que quieres cambiar el rol del usuario ID ${idUsuario} de "${rolAnterior.toUpperCase()}" a "${nuevoRol.toUpperCase()}"?`);
+// =========================================================
+// === GESTIÓN DE EVENTOS DE VIVIENDA (ADICIÓN) ===
+// =========================================================
 
-      if (!confirmar) {
-          // Si el usuario cancela, revertir el select a su valor original
-          selectRol.value = rolAnterior; 
-          return;
-      }
+// --- GESTIONAR ASIGNACIÓN DE VIVIENDA MEDIANTE SELECT ---
+document.addEventListener('change', async e => {
+    const selectVivienda = e.target;
+    // 1. Verificar si el evento proviene de nuestro select de asignación
+    if (!selectVivienda.classList.contains('select-vivienda-asignar')) return;
 
-      try {
-          // 2. Enviar la solicitud a la API (Asumimos que creaste update_rol.php)
-          const res = await fetch('../api/update_rol.php', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ idUsuario: idUsuario, nuevoRol: nuevoRol }),
-              credentials: 'include'
-          });
+    const idSocio = selectVivienda.dataset.socioId;
+    const idVivienda = selectVivienda.value; 
+    
+    // Buscar el NroVivienda para el mensaje de confirmación
+    const viviendaSeleccionada = viviendasDisponibles.find(v => v.IdVivienda == idVivienda);
+    const nroVivienda = viviendaSeleccionada ? viviendaSeleccionada.NroVivienda : 'N/A';
+    
+    // 2. Solicitud de confirmación
+    const confirmar = confirm(`¿Estás seguro de asignar la Vivienda ${nroVivienda} al socio ID ${idSocio}?`);
 
-          const result = await res.json();
+    if (!confirmar) {
+        // Si el usuario cancela, revertir el select al valor por defecto
+        selectVivienda.value = ""; 
+        return;
+    }
 
-          if (res.ok && result.status === 'ok') {
-              alert(`Rol del usuario ID ${idUsuario} actualizado a: ${nuevoRol.toUpperCase()}`);
-              
-              // Actualizar el atributo de datos en el TD para reflejar el nuevo rol
-              tdRol.dataset.currentRol = nuevoRol; 
-              
-          } else {
-              alert(result.error || 'Error al actualizar el rol.');
-              // Si falla en el backend, revertir el select
-              selectRol.value = rolAnterior;
-          }
-      } catch (error) {
-          console.error("Error al cambiar rol:", error);
-          alert("No se pudo conectar con el servidor para cambiar el rol.");
-          // Si hay error de conexión, revertir el select
-          selectRol.value = rolAnterior;
-      }
-  });
+    try {
+        // 3. Enviar la solicitud a la API (gestionar_vivienda.php)
+        const formData = new FormData();
+        formData.append('accion', 'asignar');
+        formData.append('idSocio', idSocio);
+        formData.append('idVivienda', idVivienda);
+        
+        selectVivienda.disabled = true;
 
-  // === FUNCIÓN 3: ELIMINAR USUARIO ===
-  document.addEventListener('click', async e => {
-      const btn = e.target;
-      if (!btn.classList.contains('btn-eliminar')) return;
+        const res = await fetch(API_GESTIONAR, {
+            method: 'POST',
+            body: formData,
+        });
 
-      const idUsuario = btn.dataset.usuarioId;
-      const fila = btn.closest('tr');
+        const result = await res.json();
 
-      // 1. Solicitud de confirmación
-      const confirmar = confirm(`⚠️ ¡ATENCIÓN! ¿Estás seguro de que quieres ELIMINAR permanentemente al usuario ID ${idUsuario}? Esta acción es irreversible y podría causar errores si existen registros relacionados (horas, pagos, etc.).`);
+        if (res.ok && result.status === 'success') {
+            alert(`Vivienda ${nroVivienda} asignada correctamente.`);
+            
+            // Recargar la tabla para que el SELECT desaparezca y muestre el botón Desasignar
+            cargarTablaUsuarios(); 
+            
+        } else {
+            alert(result.message || 'Error al asignar la vivienda.');
+            // Si falla en el backend, reactivar el select y revertir
+            selectVivienda.value = "";
+            selectVivienda.disabled = false;
+        }
+    } catch (error) {
+        console.error("Error al asignar vivienda:", error);
+        alert("No se pudo conectar con el servidor para asignar la vivienda.");
+        selectVivienda.value = "";
+        selectVivienda.disabled = false;
+    }
+});
 
-      if (!confirmar) return;
 
-      try {
-          // 2. Enviar la solicitud a la nueva API delete_usuario.php
-          const res = await fetch('../api/delete_usuario.php', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ idUsuario: idUsuario }),
-              credentials: 'include'
-          });
+// --- GESTIONAR DESASIGNACIÓN DE VIVIENDA MEDIANTE BOTÓN ---
+document.addEventListener('click', async e => {
+    const btn = e.target;
+    if (!btn.classList.contains('btn-desasignar-vivienda')) return;
 
-          const result = await res.json();
+    const idSocio = btn.dataset.socioId;
+    
+    if (!confirm(`¿Estás seguro de desasignar la vivienda del socio ID ${idSocio}?`)) return;
 
-          if (res.ok && result.status === 'ok') {
-              alert(`✅ Usuario ID ${idUsuario} eliminado correctamente.`);
-              
-              // 3. Animación y remoción de la fila de la tabla
-              if (fila) {
-                  fila.style.transition = 'opacity 0.4s ease';
-                  fila.style.opacity = '0';
-                  setTimeout(() => fila.remove(), 400);
-              }
-          } else {
-              alert(result.error || 'Error al eliminar el usuario.');
-          }
-      } catch (error) {
-          console.error("Error al eliminar usuario:", error);
-          alert("❌ No se pudo conectar con el servidor para eliminar el usuario.");
-      }
-  });
+    try {
+        const formData = new FormData();
+        formData.append('accion', 'desasignar');
+        formData.append('idSocio', idSocio); 
+        
+        btn.disabled = true;
 
-  // === FUNCIÓN 4: GESTIONAR DETALLES E HISTORIAL DE SOCIO ===
-  document.addEventListener('click', async e => {
-      const btn = e.target;
-      
-      // Solo actuar si es uno de los botones de socio/historial
-      if (!btn.classList.contains('btn-ver-socio') && !btn.classList.contains('btn-historial')) return;
+        const res = await fetch(API_GESTIONAR, { method: 'POST', body: formData });
+        const result = await res.json();
 
-      const idSocio = btn.dataset.socioId;
-      const accion = btn.classList.contains('btn-ver-socio') ? 'detalles' : 'historial';
-      
-      const detallesContainer = document.getElementById('socioDetailsContainer'); // Asegúrate de que este ID exista en tu HTML
+        if (res.ok && result.status === 'success') {
+            alert(result.message);
+            // Recargar la tabla para que el botón Desasignar se convierta en el SELECT Asignar
+            cargarTablaUsuarios(); 
+        } else {
+            alert(result.message || 'Error al desasignar la vivienda.');
+            btn.disabled = false;
+        }
+    } catch (error) {
+        console.error("Error al desasignar vivienda:", error);
+        alert("No se pudo conectar con el servidor para desasignar la vivienda.");
+        btn.disabled = false;
+    }
+});
 
-      if (!detallesContainer) {
-          alert('Error: Contenedor de detalles de socio no encontrado (#socioDetailsContainer).');
-          return;
-      }
-      
-      // Mostrar un mensaje de carga
-      detallesContainer.innerHTML = `<p>Cargando ${accion} del Socio ID ${idSocio}...</p>`;
-      
-      try {
-          // 1. Llamar a la nueva API
-          const res = await fetch('../api/get_socio_details.php?idSocio=' + idSocio, {
-              method: 'GET',
-              headers: { 'Content-Type': 'application/json' },
-              credentials: 'include'
-          });
 
-          const result = await res.json();
+// =========================================================
+// === GESTIÓN DE CAMBIO DE ROL (MANTENIDO) ===
+// =========================================================
+document.addEventListener('change', async e => {
+    const selectRol = e.target;
+    if (!selectRol.classList.contains('select-rol')) return;
 
-          if (res.ok && result.status === 'ok') {
-              
-              if (accion === 'detalles') {
-                  // Mostrar solo los detalles personales
-                  mostrarDetallesSocio(result.socio, result.vivienda, detallesContainer);
-              } else if (accion === 'historial') {
-                  // Mostrar el historial de horas y pagos
-                  mostrarHistorialSocio(result.horas, result.pagos, detallesContainer, result.socio);
-              }
+    const idUsuario = selectRol.dataset.usuarioId;
+    const nuevoRol = selectRol.value;
+    const tdRol = selectRol.closest('td');
+    const rolAnterior = tdRol.dataset.currentRol;
+    
+    // 1. Solicitud de confirmación
+    const confirmar = confirm(`¿Estás seguro de que quieres cambiar el rol del usuario ID ${idUsuario} de "${rolAnterior.toUpperCase()}" a "${nuevoRol.toUpperCase()}"?`);
 
-              // Muestra la sección o modal donde se carga la información (si está oculta)
-              // Ejemplo: document.getElementById('seccion-socio').classList.add('activa');
+    if (!confirmar) {
+        selectRol.value = rolAnterior; 
+        return;
+    }
 
-          } else {
-              detallesContainer.innerHTML = `<p class="error">Error al cargar datos: ${result.error || 'Respuesta inválida del servidor.'}</p>`;
-          }
-      } catch (error) {
-          console.error(`Error al cargar ${accion}:`, error);
-          detallesContainer.innerHTML = `<p class="error">Error de conexión con el servidor.</p>`;
-      }
-  });
+    try {
+        // 2. Enviar la solicitud a la API (Asumimos que creaste update_rol.php)
+        const res = await fetch('../api/update_rol.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ idUsuario: idUsuario, nuevoRol: nuevoRol }),
+            credentials: 'include'
+        });
 
-  // --- Funciones auxiliares para mostrar la información ---
-  
-  function mostrarDetallesSocio(socio, vivienda, container) {
-      let html = `<h2>Detalles del Socio: ${socio.PrimNom} ${socio.PrimApe}</h2>`;
-      html += `<p><strong>ID Socio:</strong> ${socio.IdSocio}</p>`;
-      html += `<p><strong>Fecha de Nacimiento:</strong> ${socio.FchaNac}</p>`;
-      html += `<p><strong>Fecha de Ingreso:</strong> ${socio.FchaIngreso}</p>`;
-      html += `<p><strong>Vivienda Asignada:</strong> ${vivienda.NroVivienda || 'N/A'}</p>`;
-      container.innerHTML = html;
-  }
+        const result = await res.json();
 
-  function mostrarHistorialSocio(horas, pagos, container, socio) {
-      let html = `<h2>Historial de ${socio.PrimNom} ${socio.PrimApe}</h2>`;
-      
-      // Historial de Horas
-      html += '<h3>Horas de Trabajo Registradas:</h3>';
-      if (horas.length > 0) {
-          html += '<table class="tabla-historial">';
-          html += '<thead><tr><th>ID Horas</th><th>Fecha</th><th>Inicio</th><th>Fin</th><th>Descripción</th><th>Estado</th></tr></thead>';
-          html += '<tbody>';
-          horas.forEach(h => {
-              html += `<tr><td>${h.IdHoras}</td><td>${h.FchaHoras}</td><td>${h.HoraInicio}</td><td>${h.HoraFin}</td><td>${h.Descripción}</td><td>${h.EstadoHoras}</td></tr>`;
-          });
-          html += '</tbody></table>';
-      } else {
-          html += '<p>No hay horas de trabajo registradas.</p>';
-      }
+        if (res.ok && result.status === 'ok') {
+            alert(`Rol del usuario ID ${idUsuario} actualizado a: ${nuevoRol.toUpperCase()}`);
+            
+            // Actualizar el atributo de datos en el TD para reflejar el nuevo rol
+            tdRol.dataset.currentRol = nuevoRol; 
+            
+        } else {
+            alert(result.error || 'Error al actualizar el rol.');
+            selectRol.value = rolAnterior;
+        }
+    } catch (error) {
+        console.error("Error al cambiar rol:", error);
+        alert("No se pudo conectar con el servidor para cambiar el rol.");
+        selectRol.value = rolAnterior;
+    }
+});
 
-      // Historial de Pagos
-      html += '<h3>Historial de Pagos:</h3>';
-      if (pagos.length > 0) {
-          html += '<table class="tabla-historial">';
-          html += '<thead><tr><th>ID Pago</th><th>Fecha</th><th>Monto</th><th>Comprobante</th><th>Estado</th></tr></thead>';
-          html += '<tbody>';
-          pagos.forEach(p => {
-              html += `<tr><td>${p.IdPago}</td><td>${p.FchaPago}</td><td>${p.Monto}</td><td><a href="../comprobantes/${p.Comprobante}" target="_blank">${p.Comprobante ? 'Ver' : 'N/A'}</a></td><td>${p.EstadoPago}</td></tr>`;
-          });
-          html += '</tbody></table>';
-      } else {
-          html += '<p>No hay pagos registrados.</p>';
-      }
+// =========================================================
+// === GESTIÓN DE ELIMINAR USUARIO (MANTENIDO) ===
+// =========================================================
+document.addEventListener('click', async e => {
+    const btn = e.target;
+    if (!btn.classList.contains('btn-eliminar')) return;
 
-      container.innerHTML = html;
-  }
-  
+    const idUsuario = btn.dataset.usuarioId;
+    const fila = btn.closest('tr');
+
+    // 1. Solicitud de confirmación
+    const confirmar = confirm(`⚠️ ¡ATENCIÓN! ¿Estás seguro de que quieres ELIMINAR permanentemente al usuario ID ${idUsuario}?`);
+
+    if (!confirmar) return;
+
+    try {
+        // 2. Enviar la solicitud a la nueva API delete_usuario.php
+        const res = await fetch('../api/delete_usuario.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ idUsuario: idUsuario }),
+            credentials: 'include'
+        });
+
+        const result = await res.json();
+
+        if (res.ok && result.status === 'ok') {
+            alert(`✅ Usuario ID ${idUsuario} eliminado correctamente.`);
+            
+            // 3. Animación y remoción de la fila de la tabla
+            if (fila) {
+                fila.style.transition = 'opacity 0.4s ease';
+                fila.style.opacity = '0';
+                setTimeout(() => fila.remove(), 400);
+            }
+        } else {
+            alert(result.error || 'Error al eliminar el usuario.');
+        }
+    } catch (error) {
+        console.error("Error al eliminar usuario:", error);
+        alert("❌ No se pudo conectar con el servidor para eliminar el usuario.");
+    }
+});
+
+
+// =========================================================
+// === GESTIÓN DE DETALLES E HISTORIAL DE SOCIO (MANTENIDO) ===
+// =========================================================
+document.addEventListener('click', async e => {
+    const btn = e.target;
+    
+    // Solo actuar si es uno de los botones de socio/historial
+    if (!btn.classList.contains('btn-ver-socio') && !btn.classList.contains('btn-historial')) return;
+
+    const idSocio = btn.dataset.socioId;
+    const accion = btn.classList.contains('btn-ver-socio') ? 'detalles' : 'historial';
+    
+    const detallesContainer = document.getElementById('socioDetailsContainer');
+
+    if (!detallesContainer) {
+        alert('Error: Contenedor de detalles de socio no encontrado (#socioDetailsContainer).');
+        return;
+    }
+    
+    // Mostrar un mensaje de carga
+    detallesContainer.innerHTML = `<p>Cargando ${accion} del Socio ID ${idSocio}...</p>`;
+    
+    try {
+        // 1. Llamar a la nueva API get_socio_details.php
+        const res = await fetch('../api/get_socio_details.php?idSocio=' + idSocio, {
+            method: 'GET',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include'
+        });
+
+        const result = await res.json();
+
+        if (res.ok && result.status === 'ok') {
+            
+            if (accion === 'detalles') {
+                mostrarDetallesSocio(result.socio, result.vivienda, detallesContainer);
+            } else if (accion === 'historial') {
+                mostrarHistorialSocio(result.horas, result.pagos, detallesContainer, result.socio);
+            }
+
+        } else {
+            detallesContainer.innerHTML = `<p class="error">Error al cargar datos: ${result.error || 'Respuesta inválida del servidor.'}</p>`;
+        }
+    } catch (error) {
+        console.error(`Error al cargar ${accion}:`, error);
+        detallesContainer.innerHTML = `<p class="error">Error de conexión con el servidor.</p>`;
+    }
+});
+
+
+// --- Funciones auxiliares para mostrar la información (MANTENIDAS) ---
+function mostrarDetallesSocio(socio, vivienda, container) {
+    let html = `<h2>Detalles del Socio: ${socio.PrimNom} ${socio.PrimApe}</h2>`;
+    html += `<p><strong>ID Socio:</strong> ${socio.IdSocio}</p>`;
+    html += `<p><strong>Fecha de Nacimiento:</strong> ${socio.FchaNac}</p>`;
+    html += `<p><strong>Fecha de Ingreso:</strong> ${socio.FchaIngreso}</p>`;
+    html += `<p><strong>Vivienda Asignada:</strong> ${vivienda.NroVivienda || 'N/A'}</p>`;
+    container.innerHTML = html;
+}
+
+function mostrarHistorialSocio(horas, pagos, container, socio) {
+    let html = `<h2>Historial de ${socio.PrimNom} ${socio.PrimApe}</h2>`;
+    
+    // Historial de Horas
+    html += '<h3>Horas de Trabajo Registradas:</h3>';
+    if (horas.length > 0) {
+        html += '<table class="tabla-historial">';
+        html += '<thead><tr><th>ID Horas</th><th>Fecha</th><th>Inicio</th><th>Fin</th><th>Descripción</th><th>Estado</th></tr></thead>';
+        html += '<tbody>';
+        horas.forEach(h => {
+            html += `<tr><td>${h.IdHoras}</td><td>${h.FchaHoras}</td><td>${h.HoraInicio}</td><td>${h.HoraFin}</td><td>${h.Descripción}</td><td>${h.EstadoHoras}</td></tr>`;
+        });
+        html += '</tbody></table>';
+    } else {
+        html += '<p>No hay horas de trabajo registradas.</p>';
+    }
+
+    // Historial de Pagos
+    html += '<h3>Historial de Pagos:</h3>';
+    if (pagos.length > 0) {
+        html += '<table class="tabla-historial">';
+        html += '<thead><tr><th>ID Pago</th><th>Fecha</th><th>Monto</th><th>Comprobante</th><th>Estado</th></tr></thead>';
+        html += '<tbody>';
+        pagos.forEach(p => {
+            html += `<tr><td>${p.IdPago}</td><td>${p.FchaPago}</td><td>${p.Monto}</td><td><a href="/Cooperativa/Backoffice/comprobantes/${p.Comprobante}" target="_blank">${p.Comprobante ? 'Ver' : 'N/A'}</a></td><td>${p.EstadoPago}</td></tr>`;
+        });
+        html += '</tbody></table>';
+    } else {
+        html += '<p>No hay pagos registrados.</p>';
+    }
+
+    container.innerHTML = html;
+}
+
+const API_URL = '../api/get_viviendas.php';
+
+    const tablaBody = document.getElementById('viviendasTableBody');
+    /**
+     * Función principal para obtener y mostrar la lista de viviendas.
+     */
+    async function cargarViviendas() {
+        if (!tablaBody) {
+            console.error("El elemento con id 'viviendasTableBody' no fue encontrado.");
+            return;
+        }
+        // Mostrar un mensaje de carga inicial
+        tablaBody.innerHTML = '<tr><td colspan="5" style="text-align: center;">Cargando unidades de vivienda...</td></tr>';
+        try {
+            const response = await fetch(API_URL);
+            if (!response.ok) {
+                throw new Error(`Error HTTP: ${response.status}`);
+            }
+
+            const jsonResponse = await response.json();
+            if (jsonResponse.status === 'success') {
+                const viviendas = jsonResponse.data;
+                if (viviendas.length > 0) {
+                    llenarTabla(viviendas);
+                } else {
+                    tablaBody.innerHTML = '<tr><td colspan="5" style="text-align: center;">No hay viviendas registradas.</td></tr>';
+                }
+            } else {
+                tablaBody.innerHTML = `<tr><td colspan="5" style="color: red; text-align: center;">Error al cargar los datos: ${jsonResponse.message}</td></tr>`;
+            }
+
+        } catch (error) {
+            console.error('Error al intentar obtener las viviendas:', error);
+            tablaBody.innerHTML = `<tr><td colspan="5" style="color: red; text-align: center;">Ocurrió un error de red o de servidor.</td></tr>`;
+        }
+    }
+    /**
+     * Itera sobre el array de viviendas y construye las filas de la tabla.
+     */
+    function llenarTabla(viviendas) {
+        tablaBody.innerHTML = ''; // Limpiar el contenido de carga
+        viviendas.forEach(vivienda => {
+            const idVivienda = vivienda.IdVivienda;
+            // Si el valor es nulo (resultado del LEFT JOIN), se considera "Sin Asignar"
+            const socioId = vivienda.IdSocio ? vivienda.IdSocio : 'N/A';
+            const socioNombre = vivienda.NombreSocio ? vivienda.NombreSocio : '<span style="color: orange; font-weight: bold;">Sin Asignar</span>';
+
+            // Verificar si IdSocio tiene un valor asignado (usamos el campo NombreSocio como indicador)
+            const isAsignado = !!vivienda.NombreSocio; 
+
+            // Determinar qué botón mostrar en la columna Acciones
+            const accionBoton = isAsignado 
+                ? `<button onclick="desasignarSocio(${idVivienda}, ${vivienda.IdSocio})" class="btn-desasignar">Desasignar</button>`
+                : `<button onclick="abrirModalAsignar(${idVivienda})" class="btn-asignar">Asignar</button>`;
+
+            // Crear la fila <tr> e insertar celdas <td>
+            const row = tablaBody.insertRow();
+            row.insertCell().textContent = idVivienda;                      // ID Vivienda
+            row.insertCell().textContent = vivienda.NroVivienda;             // Número
+            row.insertCell().textContent = socioId;                          // ID Socio Asignado
+            row.insertCell().innerHTML = socioNombre;                        // Asignado a (Usuario)
+        });
+
+    }
+    // Ejecutar la función para cargar las viviendas al iniciar la página
+    cargarViviendas();
+
+ // =======================================
+// === CONFIGURACIÓN DE METAS (ADMIN) ===
+// =======================================
+
+const METAS_API_URL = '../api/set_metas.php';
+
+document.addEventListener('DOMContentLoaded', () => {
+    // 1. Cargar datos en la sección de HORAS
+    if (document.getElementById('metas-config')) {
+        cargarMetasActuales();
+    }
+    
+    // 2. Cargar datos en la sección de PAGO
+    if (document.getElementById('metas-pago-config')) {
+        cargarMetasPagoActuales();
+    }
+});
+
+/**
+ * Función central para obtener las horas y el monto actuales de la DB.
+ * Es utilizada por ambas funciones de carga.
+ */
+async function fetchMetasConfig() {
+    try {
+        const response = await fetch(METAS_API_URL, { method: 'GET' });
+        const result = await response.json();
+        
+        if (!response.ok || result.status !== 'ok') {
+            // Manejar error de autenticación (403 Prohibido) o error general
+            return { error: result.message || 'Error al obtener configuración', status: response.status };
+        }
+        return result.data;
+    } catch (error) {
+        console.error('Error de conexión al obtener metas:', error);
+        return { error: 'Error de conexión con el servidor.' };
+    }
+}
+
+
+// --- LÓGICA DE CARGA: SECCIÓN HORAS ---
+async function cargarMetasActuales() {
+    const data = await fetchMetasConfig();
+    const metasConfigDiv = document.getElementById('metas-config');
+
+    if (data && data.error) {
+        if (data.status === 403 && metasConfigDiv) {
+             metasConfigDiv.innerHTML = `<h3>⚙️ Configuración de Horas Requeridas</h3><p style="color:red;">Acceso denegado. Solo administradores pueden configurar metas.</p>`;
+        }
+        return;
+    }
+    
+    if (data) {
+        // Rellena el campo visible de horas
+        document.getElementById('horas_req').value = data.HorasRequeridas || 0.00;
+        
+        // Crea y rellena el campo OCULTO para el MontoPagar (CLAVE)
+        let montoInput = document.getElementById('monto_pagar_hidden_horas');
+        if (!montoInput) {
+            montoInput = document.createElement('input');
+            montoInput.type = 'hidden';
+            montoInput.id = 'monto_pagar_hidden_horas';
+            montoInput.name = 'monto_pagar';
+            document.querySelector('.form-metas').appendChild(montoInput);
+        }
+        montoInput.value = data.MontoPagar || 0.00; 
+    }
+}
+
+
+// --- LÓGICA DE CARGA: SECCIÓN PAGO ---
+async function cargarMetasPagoActuales() {
+    const data = await fetchMetasConfig();
+    const metasPagoConfigDiv = document.getElementById('metas-pago-config');
+    
+    if (data && data.error) {
+        if (data.status === 403 && metasPagoConfigDiv) {
+             metasPagoConfigDiv.innerHTML = `<h3>💰 Configuración de Monto a Pagar</h3><p style="color:red;">Acceso denegado. Solo administradores pueden configurar metas de pago.</p>`;
+        }
+        return;
+    }
+
+    if (data) {
+        // Rellena el campo visible de monto
+        document.getElementById('monto_pagar_input').value = data.MontoPagar || 0.00;
+        
+        // Crea y rellena el campo OCULTO para HorasRequeridas (CLAVE)
+        let horasInput = document.getElementById('horas_req_hidden_pago');
+        if (!horasInput) {
+            horasInput = document.createElement('input');
+            horasInput.type = 'hidden';
+            horasInput.id = 'horas_req_hidden_pago';
+            horasInput.name = 'horas_req';
+            document.querySelector('.form-metas-pago').appendChild(horasInput);
+        }
+        horasInput.value = data.HorasRequeridas || 0.00; 
+    }
+}
+
+
+// --- LÓGICA DE ENVÍO DE FORMULARIO (POST) ---
+document.addEventListener('submit', async e => {
+    // Identifica qué formulario se está enviando
+    const isHorasForm = e.target.classList.contains('form-metas');
+    const isPagoForm = e.target.classList.contains('form-metas-pago');
+    
+    if (!isHorasForm && !isPagoForm) return;
+    
+    e.preventDefault(); 
+
+    const form = e.target;
+    const formData = new FormData(form);
+
+    const submitButton = form.querySelector('button[type="submit"]');
+    const statusSpan = form.querySelector('span'); // El span está al lado del botón
+    const originalText = submitButton.textContent;
+    
+    submitButton.disabled = true;
+    statusSpan.style.color = 'black';
+    statusSpan.textContent = 'Guardando...';
+
+    try {
+        const res = await fetch(form.action, {
+            method: 'POST',
+            body: formData,
+            credentials: 'include'
+        });
+
+        const result = await res.json();
+
+        if (res.ok && result.status === 'ok') {
+            statusSpan.style.color = 'green';
+            statusSpan.textContent = '✅ ' + result.message;
+            
+            // Recargar ambas configuraciones para mantener los campos ocultos actualizados
+            cargarMetasActuales(); 
+            cargarMetasPagoActuales(); 
+            
+        } else {
+            statusSpan.style.color = 'red';
+            statusSpan.textContent = '❌ Error: ' + (result.message || 'Error desconocido.');
+        }
+
+    } catch (error) {
+        statusSpan.style.color = 'red';
+        statusSpan.textContent = '❌ Error de conexión con el servidor.';
+        console.error("Error al actualizar metas:", error);
+    } finally {
+        submitButton.disabled = false;
+        submitButton.textContent = originalText;
+        
+        setTimeout(() => {
+            statusSpan.textContent = '';
+        }, 5000);
+    }
+});
+
+// ========================================================
+// === LÓGICA DE REINICIO DE PROGRESO GLOBAL (SOLO ADMIN) ===
+// ========================================================
+
+document.addEventListener('DOMContentLoaded', () => {
+    // ... otros listeners ...
+    
+    const globalResetButton = document.getElementById('btn-reset-global');
+    if (globalResetButton) {
+        globalResetButton.addEventListener('click', manejarReinicioGlobal);
+    }
+});
+
+
+/**
+ * Maneja la acción de reiniciar las metas de todos los usuarios.
+ */
+async function manejarReinicioGlobal() {
+    const confirmacion = confirm("⚠️ ADVERTENCIA: Esta acción reiniciará el progreso de Horas y Pagos para TODOS los usuarios. ¿Está seguro?");
+    
+    if (!confirmacion) {
+        return;
+    }
+
+    const resetButton = document.getElementById('btn-reset-global');
+    const statusSpan = document.getElementById('reset-global-status');
+    const originalText = resetButton.textContent;
+    
+    resetButton.disabled = true;
+    statusSpan.style.color = 'black';
+    statusSpan.textContent = 'Ejecutando reinicio global...';
+
+    try {
+        const response = await fetch('../api/reiniciar_progreso_global.php', {
+            method: 'POST',
+            credentials: 'include'
+        });
+
+        const result = await response.json();
+
+        if (response.ok && result.status === 'ok') {
+            statusSpan.style.color = 'green';
+            statusSpan.textContent = '✅ ' + result.message;
+            
+            // Si el admin está viendo un dashboard, recargarlo
+            if (document.getElementById('pago-dashboard')) cargarProgresoPago();
+            if (document.getElementById('horas-dashboard')) cargarProgresoHoras();
+
+        } else {
+            statusSpan.style.color = 'red';
+            statusSpan.textContent = '❌ Error: ' + (result.message || 'Error desconocido.');
+        }
+
+    } catch (error) {
+        statusSpan.style.color = 'red';
+        statusSpan.textContent = '❌ Error de conexión con el servidor.';
+        console.error("Error al reiniciar globalmente:", error);
+    } finally {
+        resetButton.disabled = false;
+        resetButton.textContent = originalText;
+        
+        setTimeout(() => {
+            statusSpan.textContent = '';
+        }, 8000);
+    }
+}
+
+
+
+// =========================================================
+// === INICIO AL CARGAR EL DOCUMENTO ===
+// =========================================================
+document.addEventListener('DOMContentLoaded', () => {
+    // ⚠️ Importante: Cargar la tabla al inicio para mostrar los datos
+    cargarTablaUsuarios(); 
+    
+    // Las funciones cargarViviendas(), llenarTabla() y sus acciones 
+    // (desasignarSocio, abrirModalAsignar) son redundantes si ya estás 
+    // cargando las viviendas dentro de cargarTablaUsuarios, así que las hemos omitido.
+});
   // --- LLAMADA INICIAL: Cargar la tabla de gestión de usuarios ---
   cargarTablaUsuarios();
+  

@@ -132,7 +132,9 @@ header img {
   opacity: 1;
   transform: translateY(0);
   pointer-events: auto;
+  overflow-x: auto;
   z-index: 1; /* asegura que esté arriba de las otras */
+  
 }
 
 .tablas {
@@ -147,8 +149,8 @@ header img {
 
 .tablas th, .tablas td {
   padding: 12px 15px;
-  text-align: center;
   border-bottom: 1px solid #ddd;
+  text-align: center;
 }
 
 .tablas th {
@@ -377,4 +379,141 @@ header img {
 .btn-eliminar:hover {
   background-color: #c82333;
   transform: scale(1.05);
+}
+
+/* Botón de rechazar */
+.btn-desasignar-vivienda {
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+  margin: 2px;
+  transition: background-color 0.3s, transform 0.2s;
+}
+
+.btn-desasignar-vivienda:hover {
+  background-color: #c82333;
+  transform: scale(1.05);
+}
+
+/* ==================================================== */
+/* === Estilos Comunes para Configuración de Metas === */
+/* ==================================================== */
+
+/* Contenedores de Configuración */
+#metas-config,
+#metas-pago-config {
+    margin-top: 30px;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+}
+
+/* Estilo de los Formularios */
+.form-metas,
+.form-metas-pago {
+    display: flex;
+    gap: 20px;
+    align-items: flex-end; /* Alinea los elementos a la parte inferior */
+}
+
+/* Estilo de los Grupos de Campos */
+.form-metas .form-grupo,
+.form-metas-pago .form-grupo {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    /* Limita el ancho del campo de entrada para que no sea excesivo */
+    max-width: 300px; 
+}
+
+/* Estilo de los Campos de Entrada Numéricos */
+.form-metas input[type="number"],
+.form-metas-pago input[type="number"] {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    width: 100%; 
+}
+
+/* Estilo del Botón (Clase compartida: .btn-metas) */
+.btn-metas {
+    padding: 10px 15px;
+    background-color: #213B5C;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.btn-metas:hover {
+    background-color: #0056b3;
+}
+
+/* ================================================= */
+/* === Estilos para la Herramienta de Admin Global === */
+/* ================================================= */
+
+/* Contenedor principal de la herramienta de reinicio */
+#admin-reset-global {
+    /* Destaca la sección de administración */
+    padding: 20px;
+    margin-top: 30px; 
+    border: 2px solid black; /* Borde de color primario (azul) para la sección de control */
+    border-radius: 10px;
+    background-color: #f0f8ff; /* Fondo muy claro para distinguirla */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+#admin-reset-global h3 {
+    color: black; /* Color principal para el título */
+    margin-bottom: 10px;
+    font-size: 1.5em;
+    font-weight: 600;
+}
+
+#admin-reset-global p {
+    color: black;
+    margin-bottom: 20px;
+    /* Usa un color de advertencia sutil para el texto */
+    border-left: 4px solid #ffc107; 
+    padding-left: 10px;
+    font-style: italic;
+}
+
+/* Botón de Reinicio Global */
+#btn-reset-global {
+    padding: 12px 25px;
+    /* Rojo fuerte para indicar una acción de alto impacto/cuidado */
+    background-color: #dc3545; 
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 1.1em;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.1s;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+#btn-reset-global:hover {
+    background-color: #c82333;
+    transform: translateY(-1px); /* Efecto 3D sutil */
+}
+
+#btn-reset-global:disabled {
+    background-color: #6c757d; /* Gris cuando está deshabilitado */
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+/* Estilo para el span de estado */
+#reset-global-status {
+    font-weight: 600;
+    margin-left: 15px;
 }

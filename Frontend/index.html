@@ -32,33 +32,51 @@
     </div>
 
     <div id="horas" class="seccion">
-      <h2>Registrar Horas</h2>
-      <p>Formulario para registrar horas de trabajo.</p>
-      <form class="form-horas" action="../api/registrar_horas.php" method="POST">
+    <h2>Registrar Horas</h2>
+    <p>Formulario para registrar horas de trabajo.</p>
+
+    <form class="form-horas" action="../api/registrar_horas.php" method="POST">
         <div class="form-row">
-          <div class="form-col">
-            <div class="form-grupo">
-              <label for="fecha">Fecha:</label>
-              <input type="date" id="fecha" name="fecha" required>
+            <div class="form-col">
+                <div class="form-grupo">
+                    <label for="fecha">Fecha:</label>
+                    <input type="date" id="fecha" name="fecha" required>
+                </div>
+                <div class="form-grupo">
+                    <label for="horaInicio">Hora de inicio:</label>
+                    <input type="time" id="horaInicio" name="horaInicio" required>
+                </div>
+                <div class="form-grupo">
+                    <label for="horaFin">Hora de fin:</label>
+                    <input type="time" id="horaFin" name="horaFin" required>
+                </div>
             </div>
             <div class="form-grupo">
-              <label for="horaInicio">Hora de inicio:</label>
-              <input type="time" id="horaInicio" name="horaInicio" required>
+                <label for="descripcion">Descripción de la jornada:</label>
+                <textarea id="descripcion" name="descripcion" rows="6" placeholder="Describe lo que realizaste hoy..." required></textarea>
             </div>
-            <div class="form-grupo">
-              <label for="horaFin">Hora de fin:</label>
-              <input type="time" id="horaFin" name="horaFin" required>
-            </div>
-          </div>
-            <div class="form-grupo">
-              <label for="descripcion">Descripción de la jornada:</label>
-              <textarea id="descripcion" name="descripcion" rows="6" placeholder="Describe lo que realizaste hoy..." required></textarea>
-          </div>
         </div>
 
         <button type="submit" class="btn-horas">Registrar Horas</button>
-      </form>
+        <span id="horas-registro-status" style="margin-left: 15px;"></span>
+    </form>
+    
+    <div id="horas-dashboard" class="dashboard-resumen">
+        <div class="card-meta">
+            <h4>Horas Requeridas</h4>
+            <p id="horas-requeridas" class="valor-meta">0.00 h</p>
+        </div>
+        <div class="card-meta">
+            <h4>Horas Registradas</h4>
+            <p id="horas-registradas" class="valor-progreso">0.00 h</p>
+        </div>
+        <div class="card-meta restante">
+            <h4>Horas Restantes</h4>
+            <p id="horas-restantes" class="valor-restante">0.00 h</p>
+        </div>
     </div>
+    
+</div>
 
     <div id="pago" class="seccion">
       <h2>Aportar Pago</h2>
@@ -83,6 +101,22 @@
 
         <button type="submit" class="btn-pago">Enviar Pago</button>
       </form>
+
+
+    <div id="pago-dashboard" class="dashboard-resumen">
+        <div class="card-meta">
+            <h4>Monto Requerido</h4>
+            <p id="monto-requerido" class="valor-meta">$ 0.00</p>
+        </div>
+        <div class="card-meta">
+            <h4>Monto Pagado</h4>
+            <p id="monto-pagado" class="valor-progreso">$ 0.00</p>
+        </div>
+        <div class="card-meta restante">
+            <h4>Monto Restante</h4>
+            <p id="monto-restante" class="valor-restante">$ 0.00</p>
+        </div>
+    </div>
     </div>
 
     <div id="reporte" class="seccion">
@@ -128,9 +162,50 @@
     </div>
 </div>
 
-    <div id="perfil" class="seccion">
-      <h2>Perfil del Usuario</h2>
-      <p>Datos personales y configuración.</p>
+            <div id="perfil" class="seccion">
+        <h2>Perfil del Usuario</h2>
+        <p>Datos personales y configuración.</p>
+        <form class="form-perfil" action="../api/actualizar_perfil.php" method="POST">
+            
+            <div class="form-grupo">
+                <label for="nombre">Nombre:</label>
+                <input type="text" id="nombre" name="nombre" readonly disabled value="[Nombre del Usuario]">
+            </div>
+            
+            <div class="form-grupo">
+                <label for="apellido">Apellido:</label>
+                <input type="text" id="apellido" name="apellido" readonly disabled value="[Apellido del Usuario]">
+            </div>
+            
+            <div class="form-grupo">
+                <label for="cedula">Cédula (CI):</label>
+                <input type="text" id="cedula" name="cedula" required placeholder="Ingrese su número de cédula">
+            </div>
+            
+            <div class="form-grupo">
+                <label for="fecha">Fecha de Nacimiento:</label>
+                <input 
+                    type="date" 
+                    id="fecha" 
+                    name="fecha" 
+                    required 
+                    value="[Fecha Actual del Usuario]" 
+                    placeholder="AAAA-MM-DD"
+                >
+            </div>
+            
+            <div class="form-grupo">
+                <label for="vivienda">Unidad de Vivienda:</label>
+                <input type="text" id="vivienda" name="vivienda" readonly disabled value="[Nro. Vivienda]">
+            </div>
+            
+            <div class="form-grupo">
+                <label for="ingreso">Fecha de Ingreso:</label>
+                <input type="text" id="ingreso" name="ingreso" readonly disabled value="[Fecha de Ingreso]">
+            </div>
+            
+            <button type="submit" class="btn-perfil">Actualizar Perfil</button>
+        </form>
     </div>
   </div>
   

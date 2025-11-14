@@ -272,3 +272,148 @@ textarea {
     text-decoration: none;
     font-weight: bold;
 }
+
+/* ======================================= */
+/* === Estilos para Dashboards de Usuario === */
+/* ======================================= */
+
+/* Contenedor principal del dashboard (Flexbox para disposición) */
+.dashboard-resumen {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+    margin: 20px 0; /* Espacio arriba y abajo del dashboard */
+}
+
+/* Estilo para cada tarjeta de métrica (Monto Requerido, Pagado, Restante) */
+.card-meta {
+    flex: 1; /* Distribuye el espacio equitativamente */
+    padding: 15px;
+    border-radius: 8px;
+    text-align: center;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Sombra suave para un efecto de tarjeta */
+    transition: transform 0.2s;
+    background-color: white;
+    color: #213B5C;
+}
+
+.card-meta:hover {
+    transform: translateY(-2px); /* Pequeño efecto al pasar el ratón */
+}
+
+/* Estilo del título de la métrica (Ej: Monto Requerido) */
+.card-meta h4 {
+    margin-top: 0;
+    font-size: 1em;
+}
+
+/* Estilo para el valor numérico (Ej: $500.00) */
+.valor-meta,
+.valor-progreso,
+.valor-restante {
+    font-size: 1.8em;
+    font-weight: bold;
+    margin: 5px 0 0 0;
+}
+
+/* Colores específicos por tipo de métrica */
+.valor-meta {
+    color: #007bff; /* Azul para el valor requerido (Meta) */
+}
+
+.valor-progreso {
+    color: #28a745; /* Verde para el progreso (Monto Pagado) */
+}
+
+/* Estilo para la tarjeta de Monto Restante (clave para el JS) */
+.card-meta.restante {
+    /* Fondo por defecto: Rojo claro (se cambia a verde claro por JS si la meta se cumple) */
+    background-color: white; 
+    border: 1px solid #f5c6cb;
+}
+
+.valor-restante {
+    /* Color por defecto: Rojo intenso (se cambia a verde por JS si la meta se cumple) */
+    color: #dc3545; 
+}
+
+/* ======================================= */
+/* === Estilos para la Sección Perfil === */
+/* ======================================= */
+
+/* Contenedor principal del formulario de perfil */
+.form-perfil {
+    display: grid;
+    /* Divide el formulario en dos columnas para una mejor organización en desktop */
+    grid-template-columns: 1fr 1fr; 
+    gap: 20px; /* Espacio entre los grupos de formulario */
+    padding: 20px;
+    background-color: #f8f9fa; /* Fondo ligeramente gris para distinguirlo */
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+/* Estilo general para cada grupo de formulario */
+.form-grupo {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-grupo label {
+    font-weight: bold;
+    margin-bottom: 5px;
+    color: #343a40; /* Texto oscuro */
+}
+
+.form-perfil input[type="text"],
+.form-perfil input[type="date"] {
+    padding: 10px;
+    border: 1px solid #ced4da;
+    border-radius: 5px;
+    font-size: 1em;
+    width: 100%;
+    box-sizing: border-box; /* Asegura que el padding no desborde el ancho */
+    transition: border-color 0.3s;
+}
+
+.form-perfil input:focus {
+    border-color: #007bff; /* Resaltar al enfocar */
+    outline: none;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+/* Estilo específico para campos de solo lectura (disabled/readonly) */
+.form-perfil input[readonly],
+.form-perfil input[disabled] {
+    background-color: #e9ecef; /* Fondo gris para indicar que no es editable */
+    color: #6c757d; /* Texto más claro */
+    cursor: not-allowed;
+    border-style: dashed; /* Estilo de borde diferente */
+}
+
+/* Botón de envío */
+.btn-perfil {
+    grid-column: 1 / -1; /* Ocupa ambas columnas */
+    padding: 12px 20px;
+    background-color: #213B5C; /* Verde para acción de guardar/actualizar */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 1.1em;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-top: 10px;
+}
+
+.btn-perfil:hover {
+    background-color: #218838;
+}
+
+/* Media Query para pantallas más pequeñas (teléfonos) */
+@media (max-width: 768px) {
+    .form-perfil {
+        /* Pasa a ser una sola columna en pantallas pequeñas */
+        grid-template-columns: 1fr; 
+        padding: 15px;
+    }
+}

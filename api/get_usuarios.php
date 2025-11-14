@@ -9,9 +9,7 @@ session_start();
 header('Content-Type: application/json');
 
 // 1. Verificación Crítica de Conexión mysqli
-// Verificamos si $conn existe y si la conexión tiene errores
 if (!isset($conn) || $conn->connect_error) {
-    // Si la conexión falló, devolvemos un JSON limpio de error
     echo json_encode([
         'status' => 'error',
         'error' => 'La conexión a la base de datos (variable $conn) falló o no se cargó correctamente.',
@@ -21,57 +19,68 @@ if (!isset($conn) || $conn->connect_error) {
 }
 
 try {
-    // Consulta SIMPLIFICADA: Solo seleccionamos campos de la tabla 'usuario'
-    $sql = "
+    // 1. Consulta para obtener Usuarios y su Vivienda Asignada (si la tienen)
+    $sql_usuarios = "
         SELECT 
             u.IdUsuario,
+            u.IdSocio,
             u.PrimNom AS NombreUsuario, 
             u.PrimApe AS ApellidoUsuario,
             u.Email,
             u.Rol,
-            u.IdSocio,
-            u.FchaIngreso
+            u.FchaIngreso,
+            uv.IdVivienda AS IdViviendaAsignada,
+            uv.NroVivienda AS NroViviendaAsignada
         FROM 
             usuario u
+        LEFT JOIN
+            unidadvivienda uv ON u.IdSocio = uv.IdSocio -- LEFT JOIN para obtener la vivienda asignada
         ORDER BY 
             u.IdUsuario DESC
     ";
 
-    // 2. Ejecución de la consulta usando mysqli orientado a objetos
-    $result = $conn->query($sql);
-
+    $result_usuarios = $conn->query($sql_usuarios);
     $usuarios = [];
-    if ($result) {
-        // Recorrer los resultados y guardarlos en el array $usuarios
-        while ($row = $result->fetch_assoc()) {
+    if ($result_usuarios) {
+        while ($row = $result_usuarios->fetch_assoc()) {
             $usuarios[] = $row;
         }
-        $result->free(); // Liberar el conjunto de resultados
+        $result_usuarios->free();
     } else {
-        // Lanzar una excepción si la consulta SQL falla
-        throw new Exception("Error al ejecutar la consulta SQL: " . $conn->error);
+        throw new Exception("Error al ejecutar la consulta SQL de usuarios: " . $conn->error);
+    }
+
+    // 2. Consulta para obtener las Viviendas Disponibles (IdSocio IS NULL)
+    // NOTA: Recuerda que IdSocio debe permitir NULL en la tabla unidadvivienda para que esto funcione.
+    $sql_disponibles = "
+        SELECT 
+            IdVivienda, NroVivienda 
+        FROM 
+            unidadvivienda 
+        WHERE 
+            IdSocio IS NULL
+        ORDER BY
+            NroVivienda";
+
+    $result_disponibles = $conn->query($sql_disponibles);
+    $viviendas_disponibles = [];
+    if ($result_disponibles) {
+        while ($row = $result_disponibles->fetch_assoc()) {
+            $viviendas_disponibles[] = $row;
+        }
+        $result_disponibles->free();
     }
     
     $conn->close(); // Cerrar la conexión
 
-    // 3. Mapeo/Ajuste de resultados para compatibilidad con JavaScript
-    $usuarios_gestion = array_map(function($u) {
-        // Asignar 'N/A' si IdSocio es nulo/vacío
-        $u['IdSocio'] = $u['IdSocio'] ?: 'N/A';
-        // Añadimos 'NroVivienda' con valor fijo para compatibilidad con el JS del frontend
-        $u['NroVivienda'] = 'No asignada'; 
-        // Formatear fecha (solo primeros 10 caracteres)
-        $u['FchaIngreso'] = $u['FchaIngreso'] ? substr($u['FchaIngreso'], 0, 10) : 'N/A';
-        return $u;
-    }, $usuarios);
-
+    // 3. Devolver ambos resultados
     echo json_encode([
         'status' => 'ok',
-        'usuarios' => $usuarios_gestion
+        'usuarios' => $usuarios,
+        'viviendas_disponibles' => $viviendas_disponibles
     ]);
 
 } catch (Exception $e) {
-    // Manejo de errores de la solicitud o ejecución SQL
     echo json_encode([
         'status' => 'error',
         'error' => 'Error al procesar la solicitud.',

@@ -29,55 +29,103 @@
   <div class="contenido">
     <div id="inicio" class="seccion activa">
       <h2>Bienvenido al Panel de Administración</h2>
-      <p>Al seleccionar cualquiera de las opciones de la barra lateral a su izquierda podrá gestionar las horas registradas por los socios, los pagos aportados por los socios, gestionar las postulaciones de la cooperativa, gestionar los avances de la obra y gestionar los perfiles de los usuarios del sistema.</p>
+      <p>Al seleccionar cualquiera de las opciones de la barra lateral a su izquierda podrá gestionar las horas registradas por los socios, los pagos aportados por los socios, gestionar las postulaciones de la cooperativa, gestionar las viviendas y gestionar los perfiles de los usuarios del sistema.</p>
+      <div id="admin-reset-global" class="seccion-admin">
+          <h3>⚙️ Reinicio Global de Metas</h3>
+          <p>Al hacer clic, el progreso de Horas Registradas y Montos Pagados se reiniciará a cero para **TODOS** los usuarios. El conteo empezará desde hoy.</p>
+          <button id="btn-reset-global" class="btn-reset">
+              Reiniciar Metas Globales
+          </button>
+          <span id="reset-global-status" style="margin-left: 15px;"></span>
+      </div>
     </div>
 
     <div id="horas" class="seccion">
-      <h2>Gestionar Horas</h2>
-      <p>Formulario para gestionar las horas de trabajo de los socios.</p>
-      <table class="tablas" >
-    <thead>
-      <tr>
-        <th>ID Horas</th>
-        <th>Usuario</th>
-        <th>Fecha</th>
-        <th>Inicio de Jornada</th>
-        <th>Fin de Jornada</th>
-        <th>Descripcion de la jornada</th>
-        <th>Estado</th>
-        <th>Acciones</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td colspan="5">Los datos se cargarán aquí automáticamente.</td>
-      </tr>
-    </tbody>
-  </table>
+    <h2>Gestionar Horas</h2>
+    <p>Formulario para gestionar las horas de trabajo de los socios.</p>
+
+    <table class="tablas">
+        <thead>
+            <tr>
+                <th>ID Horas</th>
+                <th>Usuario</th>
+                <th>Fecha</th>
+                <th>Inicio de Jornada</th>
+                <th>Fin de Jornada</th>
+                <th>Descripcion de la jornada</th>
+                <th>Estado</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td colspan="8">Los datos de registro de horas se cargarán aquí automáticamente.</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <hr>
+    
+    <div id="metas-config">
+        <h3>⚙️ Configuración de Horas Requeridas</h3>
+        <p>Establezca las horas de trabajo mínimas requeridas por período.</p>
+
+        <form class="form-metas" action="../api/set_metas.php" method="POST">
+            
+            <div class="form-grupo">
+                <label for="horas_req">Horas de Trabajo Requeridas:</label>
+                <input type="number" step="0.01" id="horas_req" name="horas_req" required placeholder="Ej: 160.00">
+            </div>
+
+            <button type="submit" class="btn-metas">Guardar Configuración</button>
+            <span id="metas-status" style="margin-left: 15px;"></span>
+        </form>
     </div>
+    
+</div>
 
     <div id="pago" class="seccion">
-      <h2>Gestionar Pagos</h2>
-      <p>Sección para gestionar los pagos de los socios.</p>
-      <table class="tablas">
-    <thead>
-      <tr>
-        <th>ID Pago</th>
-        <th>Usuario</th>
-        <th>Fecha</th>
-        <th>Monto</th>
-        <th>Comprobante</th>
-        <th>Estado</th>
-        <th>Acciones</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td colspan="5">Los datos se cargarán aquí automáticamente.</td>
-      </tr>
-    </tbody>
-  </table>
+    <h2>Gestionar Pagos</h2>
+    <p>Sección para gestionar los pagos de los socios.</p>
+
+    <table class="tablas">
+        <thead>
+            <tr>
+                <th>ID Pago</th>
+                <th>Usuario</th>
+                <th>Fecha</th>
+                <th>Monto</th>
+                <th>Comprobante</th>
+                <th>Estado</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td colspan="8">Los datos de pagos se cargarán aquí automáticamente.</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <hr>
+    
+    <div id="metas-pago-config">
+        <h3>💰 Configuración de Monto a Pagar</h3>
+        <p>Establezca el monto global requerido a pagar por período.</p>
+
+        <form class="form-metas-pago" action="../api/set_metas.php" method="POST">
+            
+            <div class="form-grupo">
+                <label for="monto_pagar">Monto Requerido a Pagar ($):</label>
+                <input type="number" step="0.01" id="monto_pagar_input" name="monto_pagar" required placeholder="Ej: 500.00">
+            </div>
+
+            <button type="submit" class="btn-metas">Guardar Configuración</button>
+            <span id="metas-pago-status" style="margin-left: 15px;"></span>
+        </form>
     </div>
+    
+</div>
 
     <div id="postulacion" class="seccion">
       <h2>Gestionar Postulaciones</h2>
@@ -104,29 +152,17 @@
 
     <div id="vivienda" class="seccion">
     <h2>Gestionar Unidades de Vivienda</h2>
+    <p>Acá podrás gestionar las unidades de vivienda asignadas a los socios.</p>
 
-    <div class="form-contenedor">
-        <h3>Crear Nueva Unidad de Vivienda</h3>
-        <form id="formCrearVivienda" class="form-vivienda">
-            <label for="nroVivienda">Número de Vivienda:</label>
-            <input type="text" id="nroVivienda" name="nroVivienda" required>
-            <button type="submit" class="btn-principal">Crear Vivienda</button>
-            <p id="mensajeVivienda"></p>
-        </form>
-    </div>
-
-    <hr>
 
     <div class="tabla-contenedor">
-        <h3>Listado de Viviendas</h3>
         <table class="tablas">
             <thead>
                 <tr>
                     <th>ID Vivienda</th>
                     <th>Número</th>
                     <th>ID Socio Asignado</th>
-                    <th>Asignado a (Usuario)</th>
-                    <th>Acciones</th>
+                    <th>Nombre del Socio</th>
                 </tr>
             </thead>
             <tbody id="viviendasTableBody">
