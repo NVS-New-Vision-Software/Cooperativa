@@ -1,0 +1,44 @@
+version: "3.9"
+
+services:
+
+  servidor-db:
+    build: ./servidor-db
+    container_name: servidor-db
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: nvs_db
+    volumes:
+      - db_data:/var/lib/mysql
+    networks:
+      - red_nvs
+    ports:
+      - "3306:3306"
+
+  servidor-app:
+    build: ./servidor-app
+    container_name: servidor-app
+    depends_on:
+      - servidor-db
+    ports:
+      - "8080:80"
+    networks:
+      - red_nvs
+
+  servidor-backups:
+    build: ./servidor-backups
+    container_name: servidor-backups
+    depends_on:
+      - servidor-db
+    volumes:
+      - backups:/backup
+    networks:
+      - red_nvs
+
+volumes:
+  db_data:
+  backups:
+
+networks:
+  red_nvs:
+    driver: bridge

@@ -395,7 +395,7 @@ document.addEventListener('DOMContentLoaded', () => {
 // =========================================================
 let viviendasDisponibles = []; // Variable global para guardar las viviendas libres
 const API_USUARIOS = '../api/get_usuarios.php';
-const API_GESTIONAR = '../api/gestionar_vivienda.php';
+const API_GESTIONAR = '../api/gestionar_viviendas.php';
 // NOTA: Asumo que otras APIs (update_rol.php, delete_usuario.php, get_socio_details.php)
 // existen en el directorio '../api/'
 // NOTA: La variable tablaBody está definida al final de este script.
