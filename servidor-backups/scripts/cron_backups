@@ -1,0 +1,2 @@
+# Ejecutar backup cada día a las 03:00 AM
+0 3 * * * /scripts/backup.sh >> /var/log/backup.log 2>&1

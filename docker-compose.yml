@@ -1,44 +1,46 @@
 version: "3.9"
 
 services:
-
   servidor-db:
     build: ./servidor-db
     container_name: servidor-db
+    restart: always
     environment:
-      MYSQL_ROOT_PASSWORD: root
+      MYSQL_ROOT_PASSWORD: RootPassword!
       MYSQL_DATABASE: nvs_db
+      MYSQL_USER: nvs_app
+      MYSQL_PASSWORD: AppStrongPassword!
     volumes:
       - db_data:/var/lib/mysql
     networks:
-      - red_nvs
-    ports:
-      - "3306:3306"
+      - nvs-net
 
   servidor-app:
     build: ./servidor-app
     container_name: servidor-app
+    restart: always
     depends_on:
       - servidor-db
     ports:
-      - "8080:80"
+      - "80:80"
     networks:
-      - red_nvs
+      - nvs-net
 
   servidor-backups:
     build: ./servidor-backups
     container_name: servidor-backups
+    restart: always
     depends_on:
       - servidor-db
     volumes:
-      - backups:/backup
+      - backup_data:/backups
     networks:
-      - red_nvs
+      - nvs-net
 
 volumes:
   db_data:
-  backups:
+  backup_data:
 
 networks:
-  red_nvs:
+  nvs-net:
     driver: bridge
