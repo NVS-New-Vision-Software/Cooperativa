@@ -2,7 +2,7 @@
 $host = 'localhost';
 $usuario = 'root';
 $contraseña = ''; // Por defecto en XAMPP, sin contraseña
-$base_datos = 'mycoop';
+$base_datos = 'nvs_new_vision_software_';
 
 $conn = new mysqli($host, $usuario, $contraseña, $base_datos);
 

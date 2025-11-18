@@ -37,7 +37,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         try {
             // Ajusta esta URL si es necesario
-            const response = await fetch('/Cooperativa/api/get_horas.php'); 
+            const response = await fetch('/Cooperativa/servidor-app/src/api/get_horas.php'); 
             if (!response.ok) throw new Error(`Error HTTP: ${response.status}`);
             
             const horas = await response.json();
@@ -75,7 +75,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         try {
             // Ajusta esta URL si es necesario
-            const response = await fetch('/Cooperativa/api/get_pagos.php'); 
+            const response = await fetch('/Cooperativa/servidor-app/src/api/get_pagos.php'); 
             if (!response.ok) throw new Error(`Error HTTP: ${response.status}`);
             
             const pagos = await response.json();
@@ -89,7 +89,7 @@ document.addEventListener('DOMContentLoaded', () => {
             pagos.forEach(pago => {
                 const montoFormateado = `$${parseFloat(pago.Monto).toFixed(2)}`;
                 const enlaceComprobante = pago.Comprobante 
-                    ? `<a href="/Cooperativa/Backoffice/comprobantes/${pago.Comprobante}" target="_blank">Ver PDF</a>` 
+                    ? `<a href="/Cooperativa/servidor-app/src/Backoffice/comprobantes/${pago.Comprobante}" target="_blank">Ver PDF</a>` 
                     : 'N/A';
                 
                 const fila = `
@@ -154,7 +154,7 @@ document.addEventListener('DOMContentLoaded', () => {
         */
 
       try {
-        const res = await fetch('/Cooperativa/api/registrar_horas.php', {
+        const res = await fetch('/Cooperativa/servidor-app/src/api/registrar_horas.php', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' }, // Si tu API espera JSON
           body: JSON.stringify(data), // Si tu API espera JSON
@@ -199,7 +199,7 @@ document.addEventListener('DOMContentLoaded', () => {
 const formData = new FormData(formPago);
 
       try {
-        const res = await fetch('/Cooperativa/api/registrar_pago.php', {
+        const res = await fetch('/Cooperativa/servidor-app/src/api/registrar_pago.php', {
           method: 'POST',
           body: formData,
           credentials: 'include'
@@ -235,7 +235,7 @@ const formData = new FormData(formPago);
   }
 });
 
-const PERFIL_API_URL = '../api/get_perfil.php';
+const PERFIL_API_URL = '/Cooperativa/servidor-app/src/api/get_perfil.php';
 
 // Asegura que el script se ejecute cuando el DOM esté completamente cargado
 document.addEventListener('DOMContentLoaded', () => {
@@ -330,7 +330,7 @@ document.addEventListener('submit', async e => {
 // === LÓGICA DE PROGRESO DE HORAS Y PAGOS (USUARIO) ===
 // ========================================================
 
-const METAS_USUARIO_API = '../api/get_metas_usuario.php'; 
+const METAS_USUARIO_API = '/Cooperativa/servidor-app/src/api/get_metas_usuario.php'; 
 
 // --- Añadir al document.addEventListener('DOMContentLoaded', ...) ---
 

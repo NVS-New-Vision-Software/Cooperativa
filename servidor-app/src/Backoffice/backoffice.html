@@ -22,6 +22,7 @@
         <li data-target="postulacion"><img src="reporte.png" alt="">Gestionar Postulaciones</li>
         <li data-target="vivienda"><img src="obra.png" alt="">Gestionar Viviendas</li>
         <li data-target="perfil"><img src="perfil.png" alt="">Gestionar Perfiles</li>
+        <li data-target="socio"><img src="inicio.png" alt="">Volver a socios</li>
       </ul>
     </nav>
   </div>
@@ -70,7 +71,7 @@
         <h3>⚙️ Configuración de Horas Requeridas</h3>
         <p>Establezca las horas de trabajo mínimas requeridas por período.</p>
 
-        <form class="form-metas" action="../api/set_metas.php" method="POST">
+        <form class="form-metas" action="/Cooperativa/servidor-app/src/api/set_metas.php" method="POST">
             
             <div class="form-grupo">
                 <label for="horas_req">Horas de Trabajo Requeridas:</label>
@@ -113,7 +114,7 @@
         <h3>💰 Configuración de Monto a Pagar</h3>
         <p>Establezca el monto global requerido a pagar por período.</p>
 
-        <form class="form-metas-pago" action="../api/set_metas.php" method="POST">
+        <form class="form-metas-pago" action="/Cooperativa/servidor-app/src/api/set_metas.php" method="POST">
             
             <div class="form-grupo">
                 <label for="monto_pagar">Monto Requerido a Pagar ($):</label>

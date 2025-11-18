@@ -1,8 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
   console.log("Script cargado");
 
-  
-
   // 🧭 Navegación entre secciones
   const items = document.querySelectorAll(".lateral li");
   const secciones = document.querySelectorAll(".seccion");
@@ -31,7 +29,7 @@ document.addEventListener('DOMContentLoaded', () => {
       };
 
       try {
-        const res = await fetch('../api/registrar_horas.php', {
+        const res = await fetch('/Cooperativa/servidor-app/src/api/registrar_horas.php', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(data),
@@ -66,7 +64,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // 📋 Cargar registros de horas
   async function cargarHoras() {
     try {
-      const res = await fetch('../api/get_horas.php', {
+      const res = await fetch('/Cooperativa/servidor-app/src/api/get_horas.php', {
         method: 'GET',
         credentials: 'include'
       });
@@ -128,7 +126,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // 🔄 Actualizar estado en el backend y eliminar fila con animación
   async function actualizarEstado(idHoras, nuevoEstado) {
     try {
-      const res = await fetch('../api/update_horas.php', {
+      const res = await fetch('/Cooperativa/servidor-app/src/api/update_horas.php', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ id: idHoras, estado: nuevoEstado }),
@@ -170,7 +168,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const formData = new FormData(formPago);
 
       try {
-        const res = await fetch('../api/registrar_pago.php', {
+        const res = await fetch('/Cooperativa/servidor-app/src/api/registrar_pago.php', {
           method: 'POST',
           body: formData,
           credentials: 'include'
@@ -204,7 +202,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // 📋 Cargar pagos pendientes
   async function cargarPagos() {
     try {
-      const res = await fetch('../api/get_pagos.php', {
+      const res = await fetch('/Cooperativa/servidor-app/src/api/get_pagos.php', {
         method: 'GET',
         credentials: 'include'
       });
@@ -222,7 +220,7 @@ document.addEventListener('DOMContentLoaded', () => {
           <td>${pago.Email}</td>
           <td>${pago.FchaPago}</td>
           <td>$${parseFloat(pago.Monto).toFixed(2)}</td>
-          <td><a href="/Cooperativa/Backoffice/comprobantes/${pago.Comprobante}" target="_blank">Ver PDF</a></td>
+          <td><a href="/Cooperativa/servidor-app/src/Backoffice/comprobantes/${pago.Comprobante}" target="_blank">Ver PDF</a></td>
           <td>${pago.EstadoPago}</td>
           <td>
             ${pago.EstadoPago === 'pendiente' ? `
@@ -264,7 +262,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // 🔄 Actualizar estado y eliminar fila con animación
   async function actualizarEstadoPago(idPago, nuevoEstado) {
     try {
-      const res = await fetch('../api/update_pago.php', {
+      const res = await fetch('/Cooperativa/servidor-app/src/api/update_pago.php', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ id: idPago, estado: nuevoEstado }),
@@ -296,7 +294,7 @@ document.addEventListener('DOMContentLoaded', () => {
  // 📋 Cargar postulaciones
   async function cargarPostulaciones() {
     try {
-      const res = await fetch('../api/get_postulaciones.php', {
+      const res = await fetch('/Cooperativa/servidor-app/src/api/get_postulaciones.php', {
         method: 'GET',
         credentials: 'include'
       });
@@ -360,7 +358,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // 🔄 Actualizar estado y eliminar fila
   async function actualizarEstadoPostulacion(id, estado) {
     try {
-      const res = await fetch('../api/update_postulacion.php', {
+      const res = await fetch('/Cooperativa/servidor-app/src/api/update_postulacion.php', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ id, estado }),
@@ -394,12 +392,8 @@ document.addEventListener('DOMContentLoaded', () => {
 // === DECLARACIONES Y VARIABLES GLOBALES ===
 // =========================================================
 let viviendasDisponibles = []; // Variable global para guardar las viviendas libres
-const API_USUARIOS = '../api/get_usuarios.php';
-const API_GESTIONAR = '../api/gestionar_viviendas.php';
-// NOTA: Asumo que otras APIs (update_rol.php, delete_usuario.php, get_socio_details.php)
-// existen en el directorio '../api/'
-// NOTA: La variable tablaBody está definida al final de este script.
-
+const API_USUARIOS = '/Cooperativa/servidor-app/src/api/get_usuarios.php';
+const API_GESTIONAR = '/Cooperativa/servidor-app/src/api/gestionar_viviendas.php';
 // =========================================================
 // === FUNCIÓN 1: CARGAR TABLA INICIAL (get_usuarios.php) ===
 // =========================================================
@@ -632,7 +626,7 @@ document.addEventListener('change', async e => {
 
     try {
         // 2. Enviar la solicitud a la API (Asumimos que creaste update_rol.php)
-        const res = await fetch('../api/update_rol.php', {
+        const res = await fetch('/Cooperativa/servidor-app/src/api/update_rol.php', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ idUsuario: idUsuario, nuevoRol: nuevoRol }),
@@ -675,7 +669,7 @@ document.addEventListener('click', async e => {
 
     try {
         // 2. Enviar la solicitud a la nueva API delete_usuario.php
-        const res = await fetch('../api/delete_usuario.php', {
+        const res = await fetch('/Cooperativa/servidor-app/src/api/delete_usuario.php', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ idUsuario: idUsuario }),
@@ -727,7 +721,7 @@ document.addEventListener('click', async e => {
     
     try {
         // 1. Llamar a la nueva API get_socio_details.php
-        const res = await fetch('../api/get_socio_details.php?idSocio=' + idSocio, {
+        const res = await fetch('/Cooperativa/servidor-app/src/api/get_socio_details.php?idSocio=' + idSocio, {
             method: 'GET',
             headers: { 'Content-Type': 'application/json' },
             credentials: 'include'
@@ -787,7 +781,7 @@ function mostrarHistorialSocio(horas, pagos, container, socio) {
         html += '<thead><tr><th>ID Pago</th><th>Fecha</th><th>Monto</th><th>Comprobante</th><th>Estado</th></tr></thead>';
         html += '<tbody>';
         pagos.forEach(p => {
-            html += `<tr><td>${p.IdPago}</td><td>${p.FchaPago}</td><td>${p.Monto}</td><td><a href="/Cooperativa/Backoffice/comprobantes/${p.Comprobante}" target="_blank">${p.Comprobante ? 'Ver' : 'N/A'}</a></td><td>${p.EstadoPago}</td></tr>`;
+            html += `<tr><td>${p.IdPago}</td><td>${p.FchaPago}</td><td>${p.Monto}</td><td><a href="/Cooperativa/servidor-app/src/Backoffice/comprobantes/${p.Comprobante}" target="_blank">${p.Comprobante ? 'Ver' : 'N/A'}</a></td><td>${p.EstadoPago}</td></tr>`;
         });
         html += '</tbody></table>';
     } else {
@@ -797,7 +791,7 @@ function mostrarHistorialSocio(horas, pagos, container, socio) {
     container.innerHTML = html;
 }
 
-const API_URL = '../api/get_viviendas.php';
+const API_URL = '/Cooperativa/servidor-app/src/api/get_viviendas.php';
 
     const tablaBody = document.getElementById('viviendasTableBody');
     /**
@@ -868,7 +862,7 @@ const API_URL = '../api/get_viviendas.php';
 // === CONFIGURACIÓN DE METAS (ADMIN) ===
 // =======================================
 
-const METAS_API_URL = '../api/set_metas.php';
+const METAS_API_URL = '/Cooperativa/servidor-app/src/api/set_metas.php';
 
 document.addEventListener('DOMContentLoaded', () => {
     // 1. Cargar datos en la sección de HORAS
@@ -1053,7 +1047,7 @@ async function manejarReinicioGlobal() {
     statusSpan.textContent = 'Ejecutando reinicio global...';
 
     try {
-        const response = await fetch('../api/reiniciar_progreso_global.php', {
+        const response = await fetch('/Cooperativa/servidor-app/src/api/reiniciar_progreso_global.php', {
             method: 'POST',
             credentials: 'include'
         });
@@ -1103,3 +1097,13 @@ document.addEventListener('DOMContentLoaded', () => {
   // --- LLAMADA INICIAL: Cargar la tabla de gestión de usuarios ---
   cargarTablaUsuarios();
   
+   const items = document.querySelectorAll('li[data-target]');
+
+  items.forEach(li => {
+    li.addEventListener('click', () => {
+      // Si el data-target es "socio", vamos a ../Frontend/index.html
+      if(li.getAttribute('data-target') === 'socio') {
+        window.location.href = '../Frontend/index.html';
+      }
+    });
+  });
